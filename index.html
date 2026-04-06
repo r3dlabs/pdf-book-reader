@@ -10,266 +10,542 @@
 
 /* ── THEMES ── */
 [data-theme="dark"] {
-  --bg: #0c0c0c;
-  --bg2: #111111;
+  --bg: #0a0a0a;
   --surface: #161616;
   --surface2: #1e1e1e;
   --surface3: #252525;
   --border: #2a2a2a;
   --text: #f0f0f0;
-  --text2: #a0a0a0;
-  --muted: #555;
+  --text2: #888;
+  --muted: #444;
   --accent: #e8ff00;
   --accent2: #ff3c3c;
-  --page-bg: #1a1a1a;
-  --shadow: rgba(0,0,0,0.6);
-  --spine: #0a0a0a;
-  --highlight: rgba(232,255,0,0.08);
+  --shadow: rgba(0,0,0,0.75);
+  --shadow2: rgba(0,0,0,0.4);
+  --spine: rgba(0,0,0,0.6);
+  --page-shadow: 0 0 60px rgba(0,0,0,0.8);
+  --highlight: rgba(232,255,0,0.1);
+  --float-bg: rgba(18,18,18,0.92);
 }
 
 [data-theme="light"] {
-  --bg: #f0ede8;
-  --bg2: #e8e4de;
-  --surface: #faf9f7;
+  --bg: #d6d0c8;
+  --surface: rgba(250,248,245,0.96);
   --surface2: #f0ede8;
-  --surface3: #e8e4de;
-  --border: #d8d4ce;
+  --surface3: #e4e0da;
+  --border: #ccc8c0;
   --text: #1a1a1a;
   --text2: #666;
   --muted: #aaa;
-  --accent: #c8a000;
+  --accent: #b8860b;
   --accent2: #cc2222;
-  --page-bg: #fff;
-  --shadow: rgba(0,0,0,0.2);
-  --spine: #c8c4be;
-  --highlight: rgba(200,160,0,0.12);
+  --shadow: rgba(0,0,0,0.25);
+  --shadow2: rgba(0,0,0,0.12);
+  --spine: rgba(0,0,0,0.15);
+  --page-shadow: 0 0 40px rgba(0,0,0,0.3);
+  --highlight: rgba(184,134,11,0.12);
+  --float-bg: rgba(250,248,245,0.94);
 }
 
 html, body {
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  width: 100%; height: 100%;
   overflow: hidden;
-  transition: background 0.3s, color 0.3s;
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  transition: background 0.35s;
 }
 
-/* Grain */
+/* Subtle grain overlay */
 body::after {
   content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.032'/%3E%3C/svg%3E");
   pointer-events: none;
-  z-index: 9998;
+  z-index: 9000;
 }
 
-/* ── LAYOUT ── */
-.app { display: flex; flex-direction: column; height: 100vh; }
-
-/* ── HEADER ── */
-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 0 24px;
-  height: 56px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  backdrop-filter: blur(12px);
-  flex-shrink: 0;
-  z-index: 100;
-  transition: background 0.3s, border-color 0.3s;
-}
-
-.logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.6rem;
-  letter-spacing: 0.08em;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.logo-badge {
-  background: var(--accent);
-  color: #000;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.55rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  padding: 2px 6px;
-  border-radius: 2px;
-}
-
-.header-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
-
-/* Search */
-.search-wrap {
-  flex: 1;
-  max-width: 320px;
-  position: relative;
-}
-
-.search-wrap input {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  padding: 7px 36px 7px 12px;
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.search-wrap input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(232,255,0,0.08);
-}
-
-.search-wrap input::placeholder { color: var(--muted); }
-
-.search-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--muted);
-  font-size: 0.8rem;
-  pointer-events: none;
-}
-
-.search-count {
-  position: absolute;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  color: var(--accent);
-  pointer-events: none;
-  display: none;
-}
-
-/* Page nav */
-.page-nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.page-input-wrap {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--text2);
-}
-
-.page-input-wrap input {
-  width: 44px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  padding: 5px 6px;
-  border-radius: 4px;
-  outline: none;
-  text-align: center;
-  transition: border-color 0.2s;
-}
-
-.page-input-wrap input:focus { border-color: var(--accent); }
-
-/* Icon buttons */
-.icon-btn {
-  width: 34px;
-  height: 34px;
+/* ══════════════════════════════════════
+   BOOK STAGE — full viewport
+══════════════════════════════════════ */
+#stage {
+  position: fixed; inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  cursor: pointer;
-  color: var(--text2);
-  font-size: 0.9rem;
-  transition: all 0.15s;
-  flex-shrink: 0;
+  background: var(--bg);
+  transition: background 0.35s;
 }
 
-.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
-.icon-btn.active { background: var(--accent); border-color: var(--accent); color: #000; }
-
-/* ── BODY ── */
-.body-wrap { display: flex; flex: 1; overflow: hidden; position: relative; }
-
-/* ── TOC PANEL ── */
-.toc-panel {
-  width: 280px;
-  flex-shrink: 0;
-  border-right: 1px solid var(--border);
-  background: var(--surface);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  width: 0;
+/* Drop zone */
+#drop-zone {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px; cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s;
 }
+#drop-zone.drag-over { background: var(--highlight); }
+#drop-zone.hidden { display: none; }
 
-.toc-panel.open {
-  width: 280px;
-  transform: translateX(0);
+.dz-icon { font-size: 4rem; opacity: 0.18; }
+.dz-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.8rem;
+  letter-spacing: 0.12em;
+  opacity: 0.3;
 }
-
-.toc-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
+.dz-sub {
   font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  color: var(--text2);
+  opacity: 0.6;
+}
+.dz-btn {
+  margin-top: 8px;
+  background: var(--accent);
+  color: #000;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 13px 32px;
+  border: none; border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.dz-btn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 10px 32px var(--shadow2); }
+
+/* ── BOOK WRAPPER ── */
+#book-wrap {
+  display: none;
+  position: relative;
+  /* sized by JS to fill viewport exactly */
+}
+#book-wrap.active { display: flex; align-items: stretch; }
+
+/* Pages */
+.page-side {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  transition: background 0.3s;
+}
+
+/* Spine */
+#spine {
+  width: 0;
+  position: relative;
+  flex-shrink: 0;
+  background: transparent;
+  z-index: 5;
+}
+#spine::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -8px;
+  width: 16px; height: 100%;
+  background: linear-gradient(to right,
+    rgba(0,0,0,0.22) 0%,
+    var(--spine) 40%,
+    var(--spine) 60%,
+    rgba(0,0,0,0.22) 100%
+  );
+  pointer-events: none;
+}
+
+/* Canvas inside page */
+.page-canvas {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: contain;
+}
+
+/* Page number */
+.pg-num {
+  position: absolute;
+  bottom: 10px;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
   color: var(--muted);
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  z-index: 3;
+  transition: color 0.2s;
+}
+.pg-num.hit { color: var(--accent); }
+
+/* ── FLIP GHOST ── */
+#flip-ghost {
+  position: fixed;
+  top: 0; height: 100vh;
+  pointer-events: none;
+  z-index: 100;
+  perspective: 2400px;
+  display: none;
+}
+#flip-ghost.active { display: block; }
+#flip-page {
+  width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  will-change: transform;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+#flip-page canvas {
+  width: 100%; height: 100%;
+  display: block;
+  object-fit: fill;
+}
+
+/* ══════════════════════════════════════
+   FLOATING NAV BUTTONS
+══════════════════════════════════════ */
+.float-nav {
+  position: fixed;
+  bottom: 28px;
+  z-index: 500;
+  display: none;
+  gap: 8px;
+}
+.float-nav.active { display: flex; }
+.float-nav.left-side  { left: 28px; }
+.float-nav.right-side { right: 28px; }
+
+.fnav-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--float-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.15s;
+  box-shadow: 0 4px 20px var(--shadow2);
+}
+.fnav-btn:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.08); }
+.fnav-btn:disabled { opacity: 0.25; pointer-events: none; }
+
+/* Progress strip */
+#progress-bar-wrap {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: transparent;
+  z-index: 500;
+  display: none;
+  cursor: pointer;
+}
+#progress-bar-wrap.active { display: block; }
+#progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  pointer-events: none;
+}
+#progress-bar-wrap:hover { height: 6px; }
+
+/* Page counter chip */
+#page-chip {
+  position: fixed;
+  bottom: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--float-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text2);
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: none;
+  z-index: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 4px 16px var(--shadow2);
+  white-space: nowrap;
+}
+#page-chip.active { display: block; }
+#page-chip:hover { border-color: var(--accent); color: var(--accent); }
+#page-chip input {
+  background: none; border: none; outline: none;
+  font: inherit; color: inherit; width: 30px;
+  text-align: center; cursor: pointer;
+}
+#page-chip input:focus { color: var(--accent); }
+
+/* ══════════════════════════════════════
+   FLOATING MENU (burger)
+══════════════════════════════════════ */
+#menu-root {
+  position: fixed;
+  top: 20px; right: 20px;
+  z-index: 800;
+}
+
+#menu-trigger {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--float-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px var(--shadow2);
+  transition: all 0.2s;
+  flex-direction: column;
+  gap: 4px;
+  padding: 13px 12px;
+}
+
+#menu-trigger:hover { border-color: var(--accent); }
+#menu-trigger.open { background: var(--accent); border-color: var(--accent); }
+
+.burger-bar {
+  display: block;
+  width: 18px; height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.25s;
+  transform-origin: center;
+}
+#menu-trigger.open .burger-bar { background: #000; }
+#menu-trigger.open .burger-bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+#menu-trigger.open .burger-bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+#menu-trigger.open .burger-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* Menu panel */
+#menu-panel {
+  position: absolute;
+  top: 54px; right: 0;
+  width: 240px;
+  background: var(--float-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 16px 48px var(--shadow);
+  overflow: hidden;
+  transform-origin: top right;
+  transform: scale(0.85);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), opacity 0.18s;
+}
+#menu-panel.open {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.menu-section {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.menu-section:last-child { border-bottom: none; }
+
+.menu-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.1s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.menu-item:hover { background: var(--highlight); color: var(--accent); }
+.menu-item.active-item { color: var(--accent); }
+
+.menu-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.menu-label { flex: 1; }
+.menu-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  background: var(--surface3);
+  border-radius: 10px;
+  padding: 2px 7px;
+  color: var(--text2);
+}
+.menu-badge.on { background: var(--accent); color: #000; }
+
+/* Search panel inside menu */
+#search-panel {
+  display: none;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+#search-panel.open { display: block; }
+
+.search-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.search-row input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 8px 12px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-row input:focus { border-color: var(--accent); }
+.search-row input::placeholder { color: var(--muted); }
+.search-go {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.search-go:hover { background: #fff; }
+
+#search-results-menu {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+#search-results-menu::-webkit-scrollbar { width: 3px; }
+#search-results-menu::-webkit-scrollbar-thumb { background: var(--border); }
+
+.sr-item {
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+.sr-item:last-child { border-bottom: none; }
+.sr-item:hover { background: var(--highlight); }
+.sr-page { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 2px; }
+.sr-text { font-size: 0.72rem; color: var(--text2); line-height: 1.4; }
+.sr-text mark { background: var(--accent); color: #000; border-radius: 2px; padding: 0 2px; }
+.sr-empty { padding: 14px 4px; text-align: center; font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+
+/* ══════════════════════════════════════
+   TOC PANEL — floating overlay
+══════════════════════════════════════ */
+#toc-panel {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 300px;
+  background: var(--float-bg);
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 700;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 8px 0 40px var(--shadow);
+}
+#toc-panel.open { transform: translateX(0); }
+
+#toc-header {
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-shrink: 0;
 }
+.toc-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.08em;
+}
+.toc-close {
+  width: 28px; height: 28px;
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 0.7rem;
+  color: var(--text2);
+  transition: all 0.15s;
+}
+.toc-close:hover { border-color: var(--accent2); color: var(--accent2); }
 
-.toc-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-.toc-list {
+#toc-list {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 0;
+  padding: 6px 0 20px;
 }
-
-.toc-list::-webkit-scrollbar { width: 3px; }
-.toc-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+#toc-list::-webkit-scrollbar { width: 3px; }
+#toc-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 .toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
   padding: 8px 20px;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--text2);
   cursor: pointer;
-  transition: background 0.1s, color 0.1s;
   border-left: 2px solid transparent;
+  transition: all 0.12s;
   line-height: 1.4;
 }
-
 .toc-item:hover { background: var(--highlight); color: var(--text); border-left-color: var(--accent); }
 .toc-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--highlight); }
-.toc-item[data-level="2"] { padding-left: 32px; font-size: 0.73rem; }
-.toc-item[data-level="3"] { padding-left: 44px; font-size: 0.7rem; }
+.toc-item[data-level="2"] { padding-left: 32px; font-size: 0.75rem; }
+.toc-item[data-level="3"] { padding-left: 44px; font-size: 0.72rem; opacity: 0.85; }
+
+.toc-item-title { flex: 1; min-width: 0; }
+.toc-dots {
+  flex: 1;
+  border-bottom: 1px dotted var(--border);
+  margin: 0 8px;
+  position: relative;
+  top: -3px;
+  min-width: 12px;
+}
+.toc-pg {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+}
+.toc-item.active .toc-pg { color: var(--accent); }
 
 .toc-empty {
   padding: 40px 20px;
@@ -277,1064 +553,811 @@ header {
   font-family: 'DM Mono', monospace;
   font-size: 0.65rem;
   color: var(--muted);
-  line-height: 2;
+  line-height: 2.2;
 }
 
-/* ── MAIN READER ── */
-.reader-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
-  background: var(--bg);
-}
-
-/* Drop zone */
-.drop-zone {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  cursor: pointer;
-  transition: background 0.2s;
-  position: relative;
-}
-
-.drop-zone:hover { background: var(--highlight); }
-.drop-zone.drag-over { background: rgba(232,255,0,0.06); border: 2px dashed var(--accent); }
-
-.drop-icon {
-  font-size: 3.5rem;
-  opacity: 0.2;
-}
-
-.drop-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.4rem;
-  letter-spacing: 0.1em;
-  color: var(--text);
-  opacity: 0.4;
-}
-
-.drop-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.upload-btn {
-  background: var(--accent);
-  color: #000;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 12px 28px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.upload-btn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow); }
-
-/* ── BOOK STAGE ── */
-.book-stage {
-  flex: 1;
+/* Backdrop for TOC */
+#toc-backdrop {
   display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-  padding: 20px;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 699;
+  backdrop-filter: blur(2px);
 }
-
-.book-stage.active { display: flex; }
-
-/* Book container — holds left and right pages */
-.book-container {
-  display: flex;
-  align-items: stretch;
-  position: relative;
-  filter: drop-shadow(0 24px 60px var(--shadow));
-}
-
-/* Each page panel */
-.page-panel {
-  background: var(--page-bg);
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  transition: background 0.3s;
-}
-
-.page-panel.left {
-  border-right: none;
-  border-radius: 4px 0 0 4px;
-}
-
-.page-panel.right {
-  border-left: none;
-  border-radius: 0 4px 4px 0;
-}
-
-/* Book spine */
-.spine {
-  width: 12px;
-  background: linear-gradient(to right, var(--spine), var(--surface3), var(--spine));
-  flex-shrink: 0;
-  position: relative;
-  z-index: 2;
-  box-shadow: inset -2px 0 6px rgba(0,0,0,0.3), inset 2px 0 6px rgba(0,0,0,0.3);
-}
-
-/* Canvas wrappers */
-.canvas-wrap {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-canvas { display: block; }
-
-/* Page number label */
-.page-label {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  pointer-events: none;
-  z-index: 10;
-}
-
-/* Search highlight overlay */
-.search-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 5;
-}
-
-/* ── FLIP ANIMATION ── */
-.flip-container {
-  position: relative;
-  perspective: 2000px;
-}
-
-.page-turning {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  transform-origin: left center;
-  transform-style: preserve-3d;
-  animation: flipLeft 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
-  z-index: 20;
-  pointer-events: none;
-}
-
-.page-turning.flip-right {
-  transform-origin: right center;
-  animation: flipRight 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
-}
-
-@keyframes flipLeft {
-  0%   { transform: rotateY(0deg);    box-shadow: -8px 0 20px rgba(0,0,0,0.3); }
-  50%  { transform: rotateY(-90deg);  box-shadow: 0 0 40px rgba(0,0,0,0.5); }
-  100% { transform: rotateY(-180deg); box-shadow: 8px 0 20px rgba(0,0,0,0.1); }
-}
-
-@keyframes flipRight {
-  0%   { transform: rotateY(0deg);   box-shadow: 8px 0 20px rgba(0,0,0,0.3); }
-  50%  { transform: rotateY(90deg);  box-shadow: 0 0 40px rgba(0,0,0,0.5); }
-  100% { transform: rotateY(180deg); box-shadow: -8px 0 20px rgba(0,0,0,0.1); }
-}
-
-/* ── BOTTOM BAR ── */
-.bottom-bar {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 14px 24px;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  flex-shrink: 0;
-  z-index: 50;
-}
-
-.bottom-bar.active { display: flex; }
-
-/* Progress bar */
-.progress-track {
-  flex: 1;
-  max-width: 400px;
-  height: 3px;
-  background: var(--surface3);
-  border-radius: 2px;
-  cursor: pointer;
-  position: relative;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 2px;
-  transition: width 0.3s;
-  pointer-events: none;
-}
-
-.progress-thumb {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
-  background: var(--accent);
-  border-radius: 50%;
-  pointer-events: none;
-  transition: left 0.3s;
-}
-
-.nav-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  padding: 8px 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-
-.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
-.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.nav-btn:disabled:hover { border-color: var(--border); color: var(--text); }
-
-/* ── SEARCH RESULTS PANEL ── */
-.search-results {
-  position: absolute;
-  top: 56px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-top: none;
-  border-radius: 0 0 6px 6px;
-  width: 360px;
-  max-height: 260px;
-  overflow-y: auto;
-  z-index: 200;
-  display: none;
-  box-shadow: 0 12px 40px var(--shadow);
-}
-
-.search-results.open { display: block; }
-.search-results::-webkit-scrollbar { width: 3px; }
-.search-results::-webkit-scrollbar-thumb { background: var(--border); }
-
-.sr-item {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background 0.1s;
-}
-
-.sr-item:hover { background: var(--highlight); }
-.sr-item:last-child { border-bottom: none; }
-
-.sr-page {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.58rem;
-  color: var(--accent);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 3px;
-}
-
-.sr-text {
-  font-size: 0.76rem;
-  color: var(--text2);
-  line-height: 1.4;
-}
-
-.sr-text mark {
-  background: var(--accent);
-  color: #000;
-  border-radius: 2px;
-  padding: 0 2px;
-}
-
-.sr-empty {
-  padding: 24px;
-  text-align: center;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  color: var(--muted);
-}
+#toc-backdrop.open { display: block; }
 
 /* ── LOADING ── */
-.loading-overlay {
-  position: absolute;
-  inset: 0;
+#loading {
+  position: fixed; inset: 0;
   background: var(--bg);
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  z-index: 50;
-  display: none;
+  gap: 18px;
+  z-index: 600;
 }
-
-.loading-overlay.active { display: flex; }
-
+#loading.active { display: flex; }
 .loader-ring {
-  width: 48px;
-  height: 48px;
+  width: 44px; height: 44px;
   border: 3px solid var(--border);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.75s linear infinite;
 }
-
 @keyframes spin { to { transform: rotate(360deg); } }
-
-.loader-text {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-}
+.loader-text { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; }
 
 /* ── TOAST ── */
 .toast {
   position: fixed;
-  bottom: 80px;
-  right: 28px;
-  background: var(--surface);
+  bottom: 22px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--float-bg);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
   color: var(--text);
   font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  padding: 10px 18px;
-  border-radius: 4px;
+  font-size: 0.68rem;
+  padding: 9px 20px;
+  border-radius: 20px;
   z-index: 9999;
-  animation: toastIn 0.3s ease both;
-  letter-spacing: 0.05em;
+  backdrop-filter: blur(16px);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  pointer-events: none;
+}
+.toast.err { border-bottom-color: var(--accent2); }
+.toast.out { animation: toastOut 0.25s ease both; }
+@keyframes toastIn  { from { opacity:0; transform:translateX(-50%) translateY(12px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+@keyframes toastOut { from { opacity:1; transform:translateX(-50%) translateY(0); } to { opacity:0; transform:translateX(-50%) translateY(8px); } }
+
+/* Flip keyframes (used by JS-driven GSAP-style animation) */
+@keyframes flipForward {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(-180deg); }
+}
+@keyframes flipBack {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(180deg); }
 }
 
-.toast.err { border-left-color: var(--accent2); }
-.toast.out { animation: toastOut 0.3s ease both; }
-
-@keyframes toastIn  { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(16px); } }
-
-/* ── FULLSCREEN ── */
-:fullscreen .header-sep,
-:fullscreen header { border-bottom-color: var(--border); }
-
-/* Single page mode on narrow */
-@media (max-width: 700px) {
-  .page-panel.left { border-radius: 4px; border-right: 1px solid var(--border); display: none; }
-  .spine { display: none; }
-  .page-panel.right { border-radius: 4px; border-left: 1px solid var(--border); }
-}
-
-/* Scroll fix */
 * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 </style>
 </head>
 <body>
 
-<div class="app" id="app">
+<!-- Stage -->
+<div id="stage">
 
-  <!-- HEADER -->
-  <header>
-    <div class="logo">FOLIO <span class="logo-badge">PDF</span></div>
-    <div class="header-sep"></div>
-
-    <!-- TOC toggle -->
-    <button class="icon-btn" id="toc-btn" title="Table of Contents" onclick="toggleTOC()">☰</button>
-
-    <!-- Search -->
-    <div class="search-wrap">
-      <input type="text" id="search-input" placeholder="Search in document…" oninput="onSearchInput()" onkeydown="onSearchKey(event)">
-      <span class="search-count" id="search-count"></span>
-      <span class="search-icon">⌕</span>
-    </div>
-
-    <!-- Page nav -->
-    <div class="page-nav">
-      <div class="page-input-wrap">
-        <span>Pg</span>
-        <input type="number" id="page-jump" min="1" onkeydown="if(event.key==='Enter')jumpToPage()" title="Jump to page">
-        <span id="total-pages-label" style="display:none">/ <span id="total-pages">0</span></span>
-      </div>
-      <div class="header-sep"></div>
-
-      <!-- Theme -->
-      <button class="icon-btn" id="theme-btn" title="Toggle theme" onclick="toggleTheme()">◐</button>
-      <!-- Fullscreen -->
-      <button class="icon-btn" id="fs-btn" title="Fullscreen" onclick="toggleFullscreen()">⛶</button>
-      <!-- Upload new -->
-      <button class="icon-btn" title="Open PDF" onclick="triggerUpload()">⊕</button>
-    </div>
-  </header>
-
-  <!-- SEARCH RESULTS DROPDOWN -->
-  <div class="search-results" id="search-results"></div>
-
-  <!-- BODY -->
-  <div class="body-wrap">
-
-    <!-- TOC -->
-    <aside class="toc-panel" id="toc-panel">
-      <div class="toc-header">Contents</div>
-      <div class="toc-list" id="toc-list"></div>
-    </aside>
-
-    <!-- READER -->
-    <div class="reader-area" id="reader-area">
-
-      <!-- Loading -->
-      <div class="loading-overlay" id="loading">
-        <div class="loader-ring"></div>
-        <div class="loader-text" id="loading-text">Loading PDF…</div>
-      </div>
-
-      <!-- Drop zone -->
-      <div class="drop-zone" id="drop-zone" onclick="triggerUpload()" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
-        <div class="drop-icon">📖</div>
-        <div class="drop-title">OPEN A BOOK</div>
-        <div class="drop-sub">Drop a PDF or click to browse</div>
-        <button class="upload-btn" onclick="event.stopPropagation();triggerUpload()">Choose PDF File</button>
-      </div>
-
-      <!-- Book stage -->
-      <div class="book-stage" id="book-stage">
-        <div class="flip-container" id="flip-container">
-          <div class="book-container" id="book-container">
-            <!-- Left page -->
-            <div class="page-panel left" id="panel-left">
-              <div class="canvas-wrap" id="wrap-left">
-                <canvas id="canvas-left"></canvas>
-                <div class="search-overlay" id="overlay-left"></div>
-              </div>
-              <div class="page-label" id="label-left"></div>
-            </div>
-            <!-- Spine -->
-            <div class="spine"></div>
-            <!-- Right page -->
-            <div class="page-panel right" id="panel-right">
-              <div class="canvas-wrap" id="wrap-right">
-                <canvas id="canvas-right"></canvas>
-                <div class="search-overlay" id="overlay-right"></div>
-              </div>
-              <div class="page-label" id="label-right"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
+  <!-- Drop zone -->
+  <div id="drop-zone"
+    onclick="triggerUpload()"
+    ondragover="onDragOver(event)"
+    ondragleave="onDragLeave()"
+    ondrop="onDrop(event)">
+    <div class="dz-icon">📖</div>
+    <div class="dz-title">FOLIO</div>
+    <div class="dz-sub">Drop a PDF here or click to browse</div>
+    <button class="dz-btn" onclick="event.stopPropagation();triggerUpload()">Open PDF File</button>
   </div>
 
-  <!-- BOTTOM BAR -->
-  <div class="bottom-bar" id="bottom-bar">
-    <button class="nav-btn" id="btn-first" onclick="goFirst()">|◀ First</button>
-    <button class="nav-btn" id="btn-prev"  onclick="goPrev()">◀ Prev</button>
-    <div class="progress-track" id="progress-track" onclick="seekProgress(event)">
-      <div class="progress-fill" id="progress-fill"></div>
-      <div class="progress-thumb" id="progress-thumb"></div>
+  <!-- Book -->
+  <div id="book-wrap">
+    <div class="page-side" id="side-left">
+      <canvas id="canvas-left" class="page-canvas"></canvas>
+      <div class="pg-num" id="pgnum-left"></div>
     </div>
-    <button class="nav-btn" id="btn-next"  onclick="goNext()">Next ▶</button>
-    <button class="nav-btn" id="btn-last"  onclick="goLast()">Last ▶|</button>
+    <div id="spine"></div>
+    <div class="page-side" id="side-right">
+      <canvas id="canvas-right" class="page-canvas"></canvas>
+      <div class="pg-num" id="pgnum-right"></div>
+    </div>
   </div>
-
 </div>
 
-<!-- Hidden file input -->
+<!-- Flip ghost -->
+<div id="flip-ghost">
+  <div id="flip-page">
+    <canvas id="canvas-ghost"></canvas>
+  </div>
+</div>
+
+<!-- TOC backdrop -->
+<div id="toc-backdrop" onclick="closeTOC()"></div>
+
+<!-- TOC panel -->
+<div id="toc-panel">
+  <div id="toc-header">
+    <div class="toc-title">Contents</div>
+    <div class="toc-close" onclick="closeTOC()">✕</div>
+  </div>
+  <div id="toc-list"></div>
+</div>
+
+<!-- Loading -->
+<div id="loading">
+  <div class="loader-ring"></div>
+  <div class="loader-text" id="loading-text">Loading…</div>
+</div>
+
+<!-- Floating nav — left -->
+<div class="float-nav left-side" id="nav-left">
+  <button class="fnav-btn" id="btn-first" title="First page" onclick="goFirst()">⟨⟨</button>
+  <button class="fnav-btn" id="btn-prev"  title="Previous spread" onclick="goPrev()">◀</button>
+</div>
+
+<!-- Floating nav — right -->
+<div class="float-nav right-side" id="nav-right">
+  <button class="fnav-btn" id="btn-next" title="Next spread" onclick="goNext()">▶</button>
+  <button class="fnav-btn" id="btn-last" title="Last page" onclick="goLast()">⟩⟩</button>
+</div>
+
+<!-- Page chip -->
+<div id="page-chip" title="Click to jump to page">
+  <span id="chip-label">Pg </span><input id="page-jump" type="number" min="1" onkeydown="if(event.key==='Enter')jumpToPage(this.value)"> / <span id="chip-total">0</span>
+</div>
+
+<!-- Progress bar -->
+<div id="progress-bar-wrap" onclick="seekProgress(event)" title="Click to seek">
+  <div id="progress-fill"></div>
+</div>
+
+<!-- Floating menu -->
+<div id="menu-root">
+  <div id="menu-trigger" onclick="toggleMenu()" title="Menu">
+    <span class="burger-bar"></span>
+    <span class="burger-bar"></span>
+    <span class="burger-bar"></span>
+  </div>
+  <div id="menu-panel">
+
+    <!-- Search -->
+    <div class="menu-section">
+      <button class="menu-item" onclick="toggleSearch()">
+        <span class="menu-icon">⌕</span>
+        <span class="menu-label">Search</span>
+        <span class="menu-badge" id="search-badge"></span>
+      </button>
+      <div id="search-panel">
+        <div class="search-row">
+          <input id="search-input" type="text" placeholder="Search document…"
+            oninput="onSearchInput()" onkeydown="onSearchKey(event)">
+          <button class="search-go" onclick="doSearch()">Go</button>
+        </div>
+        <div id="search-results-menu"></div>
+      </div>
+    </div>
+
+    <!-- TOC -->
+    <div class="menu-section">
+      <button class="menu-item" onclick="openTOC();closeMenu()">
+        <span class="menu-icon">☰</span>
+        <span class="menu-label">Table of Contents</span>
+      </button>
+    </div>
+
+    <!-- View -->
+    <div class="menu-section">
+      <button class="menu-item" onclick="toggleTheme()">
+        <span class="menu-icon">◐</span>
+        <span class="menu-label">Dark / Light</span>
+        <span class="menu-badge" id="theme-badge">Dark</span>
+      </button>
+      <button class="menu-item" onclick="toggleFullscreen()">
+        <span class="menu-icon">⛶</span>
+        <span class="menu-label">Fullscreen</span>
+        <span class="menu-badge" id="fs-badge">Off</span>
+      </button>
+    </div>
+
+    <!-- File -->
+    <div class="menu-section">
+      <button class="menu-item" onclick="triggerUpload();closeMenu()">
+        <span class="menu-icon">⊕</span>
+        <span class="menu-label">Open PDF</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
 <input type="file" id="file-input" accept=".pdf,application/pdf" style="display:none" onchange="onFileSelect(event)">
 
-<!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  // ── STATE ──
-  let pdfDoc = null;
-  let totalPages = 0;
-  let currentSpread = 0;   // spread index: 0 = pages 1-2, 1 = pages 3-4, etc.
-  let pageTexts = {};       // page number → extracted text
-  let tocItems = [];
-  let searchResults = [];
-  let searchQuery = '';
-  let isAnimating = false;
-  let isDark = true;
+// ── STATE ──
+let pdfDoc       = null;
+let totalPages   = 0;
+let currentSpread = 0;
+let pageTexts    = {};
+let searchResults = [];
+let searchQuery  = '';
+let isAnimating  = false;
+let isDark       = true;
+let tocOpen      = false;
+let menuOpen     = false;
+let searchPanelOpen = false;
+let singlePage   = false; // narrow screens
 
-  // ── COMPUTED: left/right page numbers for a spread ──
-  function spreadPages(s) {
-    const left  = s * 2 + 1;
-    const right = s * 2 + 2;
-    return { left: left <= totalPages ? left : null,
-             right: right <= totalPages ? right : null };
+// ── SPREAD HELPERS ──
+function spreadPages(s) {
+  if (singlePage) {
+    return { left: null, right: s + 1 };
   }
+  return { left: s * 2 + 1, right: s * 2 + 2 };
+}
+function totalSpreads() {
+  if (singlePage) return totalPages;
+  return Math.ceil(totalPages / 2);
+}
 
-  function totalSpreads() {
-    return Math.ceil(totalPages / 2);
-  }
+// ── SIZING ──
+function computeLayout() {
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  // single-page mode on narrow screens or portrait
+  singlePage = W < 600;
+  return { W, H };
+}
 
-  // ── FILE HANDLING ──
-  function triggerUpload() {
-    document.getElementById('file-input').click();
-  }
+async function sizeBook() {
+  if (!pdfDoc) return;
+  const { W, H } = computeLayout();
+  const page = await pdfDoc.getPage(1);
+  const vp   = page.getViewport({ scale: 1 });
+  const ratio = vp.height / vp.width; // page aspect
 
-  function onFileSelect(e) {
-    const file = e.target.files[0];
-    if (file) loadPDF(file);
-    e.target.value = '';
-  }
+  const bookWrap = document.getElementById('book-wrap');
+  const sLeft    = document.getElementById('side-left');
+  const sRight   = document.getElementById('side-right');
+  const spine    = document.getElementById('spine');
 
-  function onDragOver(e) {
-    e.preventDefault();
-    document.getElementById('drop-zone').classList.add('drag-over');
-  }
+  if (singlePage) {
+    // Single page fills screen
+    sLeft.style.display = 'none';
+    spine.style.display = 'none';
+    sRight.style.display = 'block';
+    sRight.style.width = W + 'px';
+    sRight.style.height = H + 'px';
+    bookWrap.style.width  = W + 'px';
+    bookWrap.style.height = H + 'px';
+  } else {
+    sLeft.style.display = 'block';
+    spine.style.display = 'block';
 
-  function onDragLeave() {
-    document.getElementById('drop-zone').classList.remove('drag-over');
-  }
+    // Two pages side by side flush to screen
+    // Determine scale: fit height first, then check if width fits
+    const pageW_byH = H / ratio;
+    const totalW_byH = pageW_byH * 2; // no padding
 
-  function onDrop(e) {
-    e.preventDefault();
-    document.getElementById('drop-zone').classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type === 'application/pdf') loadPDF(file);
-    else showToast('Please drop a PDF file', true);
-  }
-
-  // ── LOAD PDF ──
-  async function loadPDF(file) {
-    showLoading('Loading PDF…');
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      totalPages = pdfDoc.numPages;
-      currentSpread = 0;
-      pageTexts = {};
-      searchResults = [];
-      searchQuery = '';
-      document.getElementById('search-input').value = '';
-      document.getElementById('search-count').style.display = 'none';
-      document.getElementById('search-results').classList.remove('open');
-
-      // Update UI
-      document.getElementById('total-pages').textContent = totalPages;
-      document.getElementById('total-pages-label').style.display = '';
-      document.getElementById('page-jump').max = totalPages;
-
-      // Show book
-      document.getElementById('drop-zone').style.display = 'none';
-      document.getElementById('book-stage').classList.add('active');
-      document.getElementById('bottom-bar').classList.add('active');
-
-      // Extract TOC
-      await extractTOC();
-
-      // Pre-extract text for search (async, non-blocking)
-      extractAllText();
-
-      // Compute book size from page 1
-      await sizePanels();
-
-      hideLoading();
-      await renderSpread(currentSpread, 'none');
-      showToast(`Loaded: ${file.name.replace('.pdf','')}`);
-    } catch(e) {
-      hideLoading();
-      showToast('Failed to load PDF', true);
-      console.error(e);
+    let pageW, pageH;
+    if (totalW_byH <= W) {
+      // height-constrained
+      pageH = H;
+      pageW = pageW_byH;
+    } else {
+      // width-constrained
+      pageW = W / 2;
+      pageH = pageW * ratio;
     }
-  }
 
-  // ── SIZE PANELS based on page aspect ratio ──
-  async function sizePanels() {
-    const page = await pdfDoc.getPage(1);
-    const vp = page.getViewport({ scale: 1 });
-    const ratio = vp.height / vp.width;
-
-    const stage = document.getElementById('book-stage');
-    const availW = stage.clientWidth - 80;
-    const availH = stage.clientHeight - 20;
-
-    // Each page takes half the width minus spine
-    const pageW = Math.min((availW - 12) / 2, availH / ratio);
-    const pageH = pageW * ratio;
-
-    ['panel-left','panel-right'].forEach(id => {
-      const el = document.getElementById(id);
-      el.style.width = pageW + 'px';
+    [sLeft, sRight].forEach(el => {
+      el.style.width  = pageW + 'px';
       el.style.height = pageH + 'px';
     });
-
-    ['canvas-left','canvas-right'].forEach(id => {
-      const c = document.getElementById(id);
-      c.style.width = pageW + 'px';
-      c.style.height = pageH + 'px';
-    });
+    bookWrap.style.width  = (pageW * 2) + 'px';
+    bookWrap.style.height = pageH + 'px';
+    spine.style.width = '0px';
   }
+}
 
-  // ── RENDER SPREAD ──
-  async function renderSpread(spreadIdx, direction) {
-    const { left, right } = spreadPages(spreadIdx);
-    await Promise.all([
-      left  ? renderPage(left,  'canvas-left',  'wrap-left')  : clearCanvas('canvas-left',  'wrap-left'),
-      right ? renderPage(right, 'canvas-right', 'wrap-right') : clearCanvas('canvas-right', 'wrap-right'),
-    ]);
+// ── FILE ──
+function triggerUpload() {
+  document.getElementById('file-input').click();
+}
+function onFileSelect(e) {
+  const f = e.target.files[0];
+  if (f) loadPDF(f);
+  e.target.value = '';
+}
+function onDragOver(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.add('drag-over');
+}
+function onDragLeave() {
+  document.getElementById('drop-zone').classList.remove('drag-over');
+}
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type === 'application/pdf') loadPDF(f);
+  else showToast('Please drop a PDF file', true);
+}
 
-    document.getElementById('label-left').textContent  = left  ? `${left}`  : '';
-    document.getElementById('label-right').textContent = right ? `${right}` : '';
-
-    updateProgress();
-    updateNavBtns();
-    updatePageJump();
-    if (searchQuery) overlaySearchHighlights();
-  }
-
-  async function renderPage(pageNum, canvasId, wrapId) {
-    const page = await pdfDoc.getPage(pageNum);
-    const panel = document.getElementById(wrapId).parentElement;
-    const w = panel.clientWidth;
-    const h = panel.clientHeight;
-
-    const viewport = page.getViewport({ scale: 1 });
-    const scaleX = w / viewport.width;
-    const scaleY = h / viewport.height;
-    const scale = Math.min(scaleX, scaleY);
-    const scaledVP = page.getViewport({ scale });
-
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    canvas.width  = scaledVP.width;
-    canvas.height = scaledVP.height;
-    canvas.style.width  = w + 'px';
-    canvas.style.height = h + 'px';
-
-    await page.render({ canvasContext: ctx, viewport: scaledVP }).promise;
-  }
-
-  function clearCanvas(canvasId, wrapId) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-
-  // ── FLIP ANIMATION ──
-  async function flipTo(newSpread, direction) {
-    if (isAnimating) return;
-    isAnimating = true;
-
-    // Animate the turning page
-    const container = document.getElementById('book-container');
-
-    // Create a ghost page div for the flip
-    const ghost = document.createElement('div');
-    ghost.style.cssText = `
-      position:absolute; top:0; ${direction==='next'?'right':'left'}:0;
-      width:calc(50% - 6px); height:100%;
-      background: var(--page-bg);
-      border: 1px solid var(--border);
-      z-index:20;
-      backface-visibility:hidden;
-      transform-origin: ${direction==='next'?'left':'right'} center;
-      animation: ${direction==='next'?'flipLeft':'flipRight'} 0.5s cubic-bezier(0.645,0.045,0.355,1) forwards;
-      overflow:hidden;
-    `;
-
-    // Copy current canvas into ghost
-    const srcCanvas = direction === 'next'
-      ? document.getElementById('canvas-right')
-      : document.getElementById('canvas-left');
-    const ghostCanvas = document.createElement('canvas');
-    ghostCanvas.width  = srcCanvas.width;
-    ghostCanvas.height = srcCanvas.height;
-    ghostCanvas.style.cssText = 'width:100%;height:100%;object-fit:contain;';
-    ghostCanvas.getContext('2d').drawImage(srcCanvas, 0, 0);
-    ghost.appendChild(ghostCanvas);
-
-    // Add shadow for depth
-    const shadow = document.createElement('div');
-    shadow.style.cssText = `
-      position:absolute; inset:0; pointer-events:none;
-      background: linear-gradient(${direction==='next'?'to left':'to right'}, rgba(0,0,0,0.4), transparent 60%);
-      animation: ${direction==='next'?'flipLeft':'flipRight'} 0.5s cubic-bezier(0.645,0.045,0.355,1) forwards;
-      transform-origin: ${direction==='next'?'left':'right'} center;
-      z-index:21;
-    `;
-    container.style.position = 'relative';
-    container.appendChild(ghost);
-    container.appendChild(shadow);
-
-    currentSpread = newSpread;
-    await renderSpread(newSpread, direction);
-
-    await new Promise(r => setTimeout(r, 520));
-    ghost.remove();
-    shadow.remove();
-    isAnimating = false;
-  }
-
-  // ── NAVIGATION ──
-  async function goNext() {
-    if (isAnimating || currentSpread >= totalSpreads() - 1) return;
-    await flipTo(currentSpread + 1, 'next');
-  }
-
-  async function goPrev() {
-    if (isAnimating || currentSpread <= 0) return;
-    await flipTo(currentSpread - 1, 'prev');
-  }
-
-  async function goFirst() {
-    if (isAnimating || currentSpread === 0) return;
+async function loadPDF(file) {
+  showLoading('Loading PDF…');
+  try {
+    const buf = await file.arrayBuffer();
+    pdfDoc = await pdfjsLib.getDocument({ data: buf }).promise;
+    totalPages = pdfDoc.numPages;
     currentSpread = 0;
-    await renderSpread(0, 'none');
-  }
-
-  async function goLast() {
-    if (isAnimating) return;
-    const last = totalSpreads() - 1;
-    if (currentSpread === last) return;
-    currentSpread = last;
-    await renderSpread(last, 'none');
-  }
-
-  async function goToPage(pageNum) {
-    const spread = Math.floor((pageNum - 1) / 2);
-    if (spread === currentSpread) return;
-    const dir = spread > currentSpread ? 'next' : 'prev';
-    if (Math.abs(spread - currentSpread) === 1) {
-      await flipTo(spread, dir);
-    } else {
-      currentSpread = spread;
-      await renderSpread(spread, 'none');
-    }
-  }
-
-  async function jumpToPage() {
-    const val = parseInt(document.getElementById('page-jump').value);
-    if (!pdfDoc || isNaN(val)) return;
-    const clamped = Math.max(1, Math.min(totalPages, val));
-    await goToPage(clamped);
-  }
-
-  // ── PROGRESS ── 
-  function updateProgress() {
-    const pct = totalSpreads() <= 1 ? 100 : (currentSpread / (totalSpreads() - 1)) * 100;
-    document.getElementById('progress-fill').style.width = pct + '%';
-    document.getElementById('progress-thumb').style.left = pct + '%';
-  }
-
-  function seekProgress(e) {
-    if (!pdfDoc) return;
-    const track = document.getElementById('progress-track');
-    const rect = track.getBoundingClientRect();
-    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    const spread = Math.round(pct * (totalSpreads() - 1));
-    if (spread !== currentSpread) { currentSpread = spread; renderSpread(spread, 'none'); }
-  }
-
-  function updateNavBtns() {
-    document.getElementById('btn-prev').disabled  = currentSpread === 0;
-    document.getElementById('btn-first').disabled = currentSpread === 0;
-    document.getElementById('btn-next').disabled  = currentSpread >= totalSpreads() - 1;
-    document.getElementById('btn-last').disabled  = currentSpread >= totalSpreads() - 1;
-  }
-
-  function updatePageJump() {
-    const { left } = spreadPages(currentSpread);
-    document.getElementById('page-jump').value = left || '';
-  }
-
-  // ── TOC ──
-  async function extractTOC() {
-    const tocEl = document.getElementById('toc-list');
-    tocItems = [];
-    try {
-      const outline = await pdfDoc.getOutline();
-      if (!outline || outline.length === 0) {
-        tocEl.innerHTML = '<div class="toc-empty">No table of contents<br>available in this PDF</div>';
-        return;
-      }
-      tocEl.innerHTML = '';
-      await flattenOutline(outline, 1, tocEl);
-    } catch(e) {
-      tocEl.innerHTML = '<div class="toc-empty">Could not read<br>table of contents</div>';
-    }
-  }
-
-  async function flattenOutline(items, level, container) {
-    for (const item of items) {
-      let pageNum = null;
-      try {
-        if (item.dest) {
-          const dest = typeof item.dest === 'string'
-            ? await pdfDoc.getDestination(item.dest)
-            : item.dest;
-          if (dest) {
-            const ref = dest[0];
-            pageNum = await pdfDoc.getPageIndex(ref) + 1;
-          }
-        }
-      } catch(_) {}
-
-      const div = document.createElement('div');
-      div.className = 'toc-item';
-      div.dataset.level = level;
-      div.dataset.page = pageNum || 1;
-      div.textContent = item.title || '—';
-      div.onclick = () => {
-        if (pageNum) goToPage(pageNum);
-        document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
-        div.classList.add('active');
-      };
-      container.appendChild(div);
-      tocItems.push({ title: item.title, page: pageNum, el: div });
-
-      if (item.items && item.items.length > 0 && level < 3) {
-        await flattenOutline(item.items, level + 1, container);
-      }
-    }
-  }
-
-  function toggleTOC() {
-    const panel = document.getElementById('toc-panel');
-    const btn   = document.getElementById('toc-btn');
-    panel.classList.toggle('open');
-    btn.classList.toggle('active');
-  }
-
-  // ── TEXT EXTRACTION (for search) ──
-  async function extractAllText() {
-    if (!pdfDoc) return;
-    for (let i = 1; i <= totalPages; i++) {
-      try {
-        const page = await pdfDoc.getPage(i);
-        const content = await page.getTextContent();
-        pageTexts[i] = content.items.map(it => it.str).join(' ');
-      } catch(_) { pageTexts[i] = ''; }
-    }
-  }
-
-  // ── SEARCH ──
-  let searchDebounce;
-  function onSearchInput() {
-    clearTimeout(searchDebounce);
-    searchDebounce = setTimeout(doSearch, 300);
-  }
-
-  function onSearchKey(e) {
-    if (e.key === 'Escape') {
-      document.getElementById('search-input').value = '';
-      clearSearch();
-    }
-    if (e.key === 'Enter') doSearch();
-  }
-
-  function doSearch() {
-    const q = document.getElementById('search-input').value.trim();
-    searchQuery = q;
-
-    if (!q || !pdfDoc) { clearSearch(); return; }
-
-    searchResults = [];
-    const lower = q.toLowerCase();
-
-    for (let pg = 1; pg <= totalPages; pg++) {
-      const text = pageTexts[pg] || '';
-      if (!text) continue;
-      const ltext = text.toLowerCase();
-      let idx = 0;
-      while ((idx = ltext.indexOf(lower, idx)) !== -1) {
-        const snippet = text.substring(Math.max(0, idx - 40), idx + q.length + 60);
-        searchResults.push({ page: pg, idx, snippet, q });
-        idx += lower.length;
-      }
-    }
-
-    renderSearchResults();
-    overlaySearchHighlights();
-
-    const countEl = document.getElementById('search-count');
-    if (searchResults.length > 0) {
-      countEl.textContent = searchResults.length;
-      countEl.style.display = '';
-    } else {
-      countEl.style.display = 'none';
-    }
-  }
-
-  function renderSearchResults() {
-    const panel = document.getElementById('search-results');
-    if (!searchResults.length) {
-      panel.innerHTML = '<div class="sr-empty">No results found</div>';
-      panel.classList.add('open');
-      return;
-    }
-
-    // Group by page, show first 40
-    const shown = searchResults.slice(0, 40);
-    panel.innerHTML = shown.map((r, i) => {
-      const hl = r.snippet.replace(
-        new RegExp(escapeReg(r.q), 'gi'),
-        m => `<mark>${escapeHtml(m)}</mark>`
-      );
-      return `<div class="sr-item" onclick="goToPage(${r.page});closeSearch()">
-        <div class="sr-page">Page ${r.page}</div>
-        <div class="sr-text">…${hl}…</div>
-      </div>`;
-    }).join('');
-    if (searchResults.length > 40) {
-      panel.innerHTML += `<div class="sr-empty">${searchResults.length - 40} more results…</div>`;
-    }
-    panel.classList.add('open');
-  }
-
-  function closeSearch() {
-    document.getElementById('search-results').classList.remove('open');
-  }
-
-  function clearSearch() {
+    pageTexts = {};
     searchResults = [];
     searchQuery = '';
-    document.getElementById('search-count').style.display = 'none';
-    document.getElementById('search-results').classList.remove('open');
-    document.getElementById('overlay-left').innerHTML = '';
-    document.getElementById('overlay-right').innerHTML = '';
+
+    document.getElementById('drop-zone').classList.add('hidden');
+    document.getElementById('book-wrap').classList.add('active');
+    ['nav-left','nav-right','page-chip','progress-bar-wrap'].forEach(id => {
+      document.getElementById(id).classList.add('active');
+    });
+    document.getElementById('chip-total').textContent = totalPages;
+    document.getElementById('page-jump').max = totalPages;
+
+    await sizeBook();
+    extractAllText();
+    await extractTOC();
+    hideLoading();
+    await renderSpread(0, 'none');
+    showToast(file.name.replace('.pdf', ''));
+  } catch(err) {
+    hideLoading();
+    showToast('Failed to load PDF', true);
+    console.error(err);
   }
+}
 
-  // Simple text highlight overlay using absolute positioned divs
-  // (true PDF text-layer highlights require PDF.js text layer — this does canvas-level page coloring)
-  function overlaySearchHighlights() {
-    // Just style the page labels if current pages have results
-    const { left, right } = spreadPages(currentSpread);
-    const hasLeft  = searchResults.some(r => r.page === left);
-    const hasRight = searchResults.some(r => r.page === right);
+// ── RENDER ──
+async function renderSpread(s, dir) {
+  const { left, right } = spreadPages(s);
+  await Promise.all([
+    left  ? renderPage(left,  'canvas-left',  'side-left')  : clearSide('canvas-left'),
+    right ? renderPage(right, 'canvas-right', 'side-right') : clearSide('canvas-right'),
+  ]);
+  setLabel('pgnum-left',  left);
+  setLabel('pgnum-right', right);
+  updateProgress();
+  updateNavBtns();
+  updateChip();
+  syncTOCActive();
+  if (searchQuery) markSearchHits();
+}
 
-    const lbl = (id, has) => {
-      const el = document.getElementById(id);
-      el.style.color = has ? 'var(--accent)' : '';
+function setLabel(id, pageNum) {
+  const el = document.getElementById(id);
+  if (!pageNum) { el.textContent = ''; return; }
+  el.textContent = pageNum;
+  const hit = searchResults.some(r => r.page === pageNum);
+  el.classList.toggle('hit', hit);
+}
+
+async function renderPage(pageNum, canvasId, sideId) {
+  const side   = document.getElementById(sideId);
+  const canvas = document.getElementById(canvasId);
+  const W = side.clientWidth;
+  const H = side.clientHeight;
+  if (!W || !H) return;
+
+  const page = await pdfDoc.getPage(pageNum);
+  const vp   = page.getViewport({ scale: 1 });
+  const scale = Math.min(W / vp.width, H / vp.height);
+  const svp   = page.getViewport({ scale });
+
+  canvas.width  = svp.width;
+  canvas.height = svp.height;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+
+  // Fill background (for light mode)
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = isDark ? '#1a1a1a' : '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  await page.render({ canvasContext: ctx, viewport: svp }).promise;
+}
+
+function clearSide(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// ── FLIP ANIMATION ──
+async function animatedFlip(fromSpread, toSpread) {
+  if (isAnimating) return;
+  isAnimating = true;
+  const dir = toSpread > fromSpread ? 'next' : 'prev';
+
+  // Which side turns?
+  const turningCanvas = dir === 'next'
+    ? document.getElementById('canvas-right')
+    : document.getElementById('canvas-left');
+  const turningside   = dir === 'next'
+    ? document.getElementById('side-right')
+    : document.getElementById('side-left');
+
+  const ghost     = document.getElementById('flip-ghost');
+  const flipPage  = document.getElementById('flip-page');
+  const gc        = document.getElementById('canvas-ghost');
+
+  // Copy turning page into ghost canvas
+  const rect = turningside.getBoundingClientRect();
+  ghost.style.left    = rect.left + 'px';
+  ghost.style.width   = rect.width + 'px';
+  gc.width  = turningCanvas.width  || rect.width;
+  gc.height = turningCanvas.height || rect.height;
+  gc.style.width  = rect.width + 'px';
+  gc.style.height = rect.height + 'px';
+  gc.getContext('2d').drawImage(turningCanvas, 0, 0, gc.width, gc.height);
+
+  // Set perspective origin
+  flipPage.style.transformOrigin = dir === 'next' ? 'left center' : 'right center';
+  flipPage.style.transition = 'none';
+  flipPage.style.transform  = 'rotateY(0deg)';
+  ghost.classList.add('active');
+
+  // Add gradient shadow on ghost
+  gc.getContext('2d');
+
+  // Render new spread underneath (invisible during flip)
+  currentSpread = toSpread;
+  await renderSpread(toSpread, dir);
+
+  // Animate the flip
+  requestAnimationFrame(() => {
+    flipPage.style.transition = 'transform 0.52s cubic-bezier(0.645,0.045,0.355,1.000)';
+    flipPage.style.transform  = dir === 'next' ? 'rotateY(-180deg)' : 'rotateY(180deg)';
+  });
+
+  await sleep(540);
+  ghost.classList.remove('active');
+  flipPage.style.transition = 'none';
+  isAnimating = false;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── NAVIGATION ──
+async function goNext() {
+  if (isAnimating || !pdfDoc || currentSpread >= totalSpreads() - 1) return;
+  const prev = currentSpread;
+  await animatedFlip(prev, currentSpread + 1);
+}
+async function goPrev() {
+  if (isAnimating || !pdfDoc || currentSpread <= 0) return;
+  const prev = currentSpread;
+  await animatedFlip(prev, currentSpread - 1);
+}
+async function goFirst() {
+  if (isAnimating || !pdfDoc || currentSpread === 0) return;
+  currentSpread = 0;
+  await renderSpread(0, 'none');
+}
+async function goLast() {
+  if (isAnimating || !pdfDoc) return;
+  const last = totalSpreads() - 1;
+  if (currentSpread === last) return;
+  currentSpread = last;
+  await renderSpread(last, 'none');
+}
+async function goToPage(pageNum, animate) {
+  if (!pdfDoc) return;
+  const p = Math.max(1, Math.min(totalPages, pageNum));
+  const spread = singlePage ? p - 1 : Math.floor((p - 1) / 2);
+  if (spread === currentSpread) return;
+  const diff = Math.abs(spread - currentSpread);
+  if (animate && diff === 1) {
+    await animatedFlip(currentSpread, spread);
+  } else {
+    currentSpread = spread;
+    await renderSpread(spread, 'none');
+  }
+}
+async function jumpToPage(val) {
+  const n = parseInt(val);
+  if (!isNaN(n)) await goToPage(n, true);
+}
+
+// ── PROGRESS ──
+function updateProgress() {
+  const pct = totalSpreads() <= 1 ? 100 : (currentSpread / (totalSpreads() - 1)) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+function seekProgress(e) {
+  if (!pdfDoc) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const s    = Math.round(pct * (totalSpreads() - 1));
+  if (s !== currentSpread) { currentSpread = s; renderSpread(s, 'none'); }
+}
+function updateNavBtns() {
+  document.getElementById('btn-first').disabled = currentSpread === 0;
+  document.getElementById('btn-prev').disabled  = currentSpread === 0;
+  document.getElementById('btn-next').disabled  = currentSpread >= totalSpreads() - 1;
+  document.getElementById('btn-last').disabled  = currentSpread >= totalSpreads() - 1;
+}
+function updateChip() {
+  const { left, right } = spreadPages(currentSpread);
+  const pg = left || right || 1;
+  document.getElementById('page-jump').value = pg;
+}
+
+// ── TOC ──
+async function extractTOC() {
+  const list = document.getElementById('toc-list');
+  list.innerHTML = '';
+  try {
+    const outline = await pdfDoc.getOutline();
+    if (!outline || !outline.length) {
+      list.innerHTML = '<div class="toc-empty">No table of contents<br>found in this PDF</div>';
+      return;
+    }
+    await flattenOutline(outline, 1, list);
+  } catch(_) {
+    list.innerHTML = '<div class="toc-empty">Could not read<br>table of contents</div>';
+  }
+}
+
+async function flattenOutline(items, level, container) {
+  for (const item of items) {
+    let pageNum = null;
+    try {
+      if (item.dest) {
+        const dest = typeof item.dest === 'string'
+          ? await pdfDoc.getDestination(item.dest)
+          : item.dest;
+        if (dest) pageNum = await pdfDoc.getPageIndex(dest[0]) + 1;
+      }
+    } catch(_) {}
+
+    const div = document.createElement('div');
+    div.className = 'toc-item';
+    div.dataset.level = level;
+    div.dataset.page  = pageNum || '';
+
+    div.innerHTML = `
+      <span class="toc-item-title">${escHtml(item.title || '—')}</span>
+      <span class="toc-dots"></span>
+      <span class="toc-pg">${pageNum || ''}</span>
+    `;
+    div.onclick = () => {
+      if (pageNum) goToPage(pageNum, true);
+      document.querySelectorAll('.toc-item').forEach(e => e.classList.remove('active'));
+      div.classList.add('active');
+      closeTOC();
     };
-    lbl('label-left', hasLeft);
-    lbl('label-right', hasRight);
+    container.appendChild(div);
+
+    if (item.items && item.items.length && level < 3) {
+      await flattenOutline(item.items, level + 1, container);
+    }
   }
+}
 
-  function escapeReg(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-  function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function syncTOCActive() {
+  const { left, right } = spreadPages(currentSpread);
+  const items = document.querySelectorAll('.toc-item[data-page]');
+  let lastActive = null;
+  items.forEach(el => {
+    const pg = parseInt(el.dataset.page);
+    if (pg && (pg === left || pg === right)) lastActive = el;
+    else if (pg && pg <= (left || right || 1)) lastActive = el;
+    el.classList.remove('active');
+  });
+  if (lastActive) lastActive.classList.add('active');
+}
 
-  // ── THEME ──
-  function toggleTheme() {
-    isDark = !isDark;
-    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-    showToast(isDark ? 'Dark mode' : 'Light mode');
+function openTOC() {
+  document.getElementById('toc-panel').classList.add('open');
+  document.getElementById('toc-backdrop').classList.add('open');
+  tocOpen = true;
+}
+function closeTOC() {
+  document.getElementById('toc-panel').classList.remove('open');
+  document.getElementById('toc-backdrop').classList.remove('open');
+  tocOpen = false;
+}
+
+// ── TEXT EXTRACTION ──
+async function extractAllText() {
+  for (let i = 1; i <= totalPages; i++) {
+    try {
+      const page    = await pdfDoc.getPage(i);
+      const content = await page.getTextContent();
+      pageTexts[i]  = content.items.map(it => it.str).join(' ');
+    } catch(_) { pageTexts[i] = ''; }
   }
+}
 
-  // ── FULLSCREEN ──
-  function toggleFullscreen() {
-    const el = document.getElementById('app');
-    if (!document.fullscreenElement) {
-      (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen).call(el);
-      document.getElementById('fs-btn').textContent = '⛶';
-    } else {
-      (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+// ── SEARCH ──
+let searchDebounce;
+function onSearchInput() {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(doSearch, 320);
+}
+function onSearchKey(e) {
+  if (e.key === 'Escape') clearSearch();
+  if (e.key === 'Enter')  doSearch();
+}
+
+function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  searchQuery = q;
+  if (!q || !pdfDoc) { clearSearch(); return; }
+
+  searchResults = [];
+  const lower = q.toLowerCase();
+  for (let pg = 1; pg <= totalPages; pg++) {
+    const text = pageTexts[pg] || '';
+    const low  = text.toLowerCase();
+    let idx = 0;
+    while ((idx = low.indexOf(lower, idx)) !== -1) {
+      const snippet = text.substring(Math.max(0, idx - 38), idx + q.length + 55);
+      searchResults.push({ page: pg, snippet, q });
+      idx += lower.length;
     }
   }
 
-  document.addEventListener('fullscreenchange', () => {
-    document.getElementById('fs-btn').textContent = document.fullscreenElement ? '⛶' : '⛶';
-  });
+  renderSearchPanel();
+  markSearchHits();
 
-  // ── LOADING ──
-  function showLoading(msg) {
-    const el = document.getElementById('loading');
-    document.getElementById('loading-text').textContent = msg;
-    el.classList.add('active');
+  const badge = document.getElementById('search-badge');
+  badge.textContent = searchResults.length ? searchResults.length : '';
+  badge.className   = 'menu-badge' + (searchResults.length ? ' on' : '');
+}
+
+function renderSearchPanel() {
+  const panel = document.getElementById('search-results-menu');
+  if (!searchResults.length) {
+    panel.innerHTML = '<div class="sr-empty">No results</div>';
+    return;
   }
-  function hideLoading() { document.getElementById('loading').classList.remove('active'); }
-
-  // ── TOAST ──
-  let toastTimer;
-  function showToast(msg, err = false) {
-    const old = document.querySelector('.toast');
-    if (old) old.remove();
-    const t = document.createElement('div');
-    t.className = 'toast' + (err ? ' err' : '');
-    t.textContent = msg;
-    document.body.appendChild(t);
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 2800);
+  const shown = searchResults.slice(0, 50);
+  panel.innerHTML = shown.map(r => {
+    const hl = r.snippet.replace(new RegExp(escReg(r.q),'gi'), m => `<mark>${escHtml(m)}</mark>`);
+    return `<div class="sr-item" onclick="goToPage(${r.page},true);closeMenu()">
+      <div class="sr-page">Pg ${r.page}</div>
+      <div class="sr-text">…${hl}…</div>
+    </div>`;
+  }).join('');
+  if (searchResults.length > 50) {
+    panel.innerHTML += `<div class="sr-empty">+${searchResults.length - 50} more</div>`;
   }
+}
 
-  // ── KEYBOARD ──
-  document.addEventListener('keydown', e => {
-    if (e.target.tagName === 'INPUT') return;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown') goNext();
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp'   || e.key === 'PageUp')   goPrev();
-    if (e.key === 'Home') goFirst();
-    if (e.key === 'End')  goLast();
-    if (e.key === 'f' || e.key === 'F') toggleFullscreen();
-    if ((e.key === 'f' && e.ctrlKey) || (e.key === 'f' && e.metaKey)) { e.preventDefault(); document.getElementById('search-input').focus(); }
-    if (e.key === 'Escape') { closeSearch(); }
-  });
+function markSearchHits() {
+  const { left, right } = spreadPages(currentSpread);
+  document.getElementById('pgnum-left').classList.toggle('hit', searchResults.some(r => r.page === left));
+  document.getElementById('pgnum-right').classList.toggle('hit', searchResults.some(r => r.page === right));
+}
 
-  // ── SWIPE / TOUCH ──
-  let touchStartX = 0;
-  document.getElementById('book-stage').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  document.getElementById('book-stage').addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 60) { dx < 0 ? goNext() : goPrev(); }
-  });
+function clearSearch() {
+  searchResults = [];
+  searchQuery   = '';
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results-menu').innerHTML = '';
+  document.getElementById('search-badge').textContent = '';
+  document.getElementById('search-badge').className = 'menu-badge';
+  document.getElementById('pgnum-left').classList.remove('hit');
+  document.getElementById('pgnum-right').classList.remove('hit');
+}
 
-  // Mouse swipe on book
-  let mouseStartX = 0;
-  document.getElementById('book-stage').addEventListener('mousedown', e => { mouseStartX = e.clientX; });
-  document.getElementById('book-stage').addEventListener('mouseup', e => {
-    const dx = e.clientX - mouseStartX;
-    if (Math.abs(dx) > 80) { dx < 0 ? goNext() : goPrev(); }
-  });
+function toggleSearch() {
+  searchPanelOpen = !searchPanelOpen;
+  document.getElementById('search-panel').classList.toggle('open', searchPanelOpen);
+  if (searchPanelOpen) setTimeout(() => document.getElementById('search-input').focus(), 80);
+}
 
-  // Click outside search to close
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.search-wrap') && !e.target.closest('.search-results')) closeSearch();
-  });
+// ── MENU ──
+function toggleMenu() {
+  menuOpen = !menuOpen;
+  document.getElementById('menu-trigger').classList.toggle('open', menuOpen);
+  document.getElementById('menu-panel').classList.toggle('open', menuOpen);
+}
+function closeMenu() {
+  menuOpen = false;
+  document.getElementById('menu-trigger').classList.remove('open');
+  document.getElementById('menu-panel').classList.remove('open');
+}
 
-  // Resize handler
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(async () => {
-      if (pdfDoc) { await sizePanels(); await renderSpread(currentSpread, 'none'); }
-    }, 200);
-  });
+// ── THEME ──
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('theme-badge').textContent = isDark ? 'Dark' : 'Light';
+  if (pdfDoc) renderSpread(currentSpread, 'none');
+}
+
+// ── FULLSCREEN ──
+function toggleFullscreen() {
+  const el = document.documentElement;
+  if (!document.fullscreenElement) {
+    (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen).call(el);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  const on = !!document.fullscreenElement;
+  document.getElementById('fs-badge').textContent = on ? 'On' : 'Off';
+  document.getElementById('fs-badge').className   = 'menu-badge' + (on ? ' on' : '');
+  if (pdfDoc) { setTimeout(() => { sizeBook().then(() => renderSpread(currentSpread, 'none')); }, 100); }
+});
+
+// ── LOADING ──
+function showLoading(msg) {
+  document.getElementById('loading-text').textContent = msg;
+  document.getElementById('loading').classList.add('active');
+}
+function hideLoading() { document.getElementById('loading').classList.remove('active'); }
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg, err = false) {
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+  const t = document.createElement('div');
+  t.className = 'toast' + (err ? ' err' : '');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3000);
+}
+
+// ── ESCAPE HELPERS ──
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escReg(s)  { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') goNext();
+  if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   goPrev();
+  if (e.key === 'Home') goFirst();
+  if (e.key === 'End')  goLast();
+  if (e.key === 'Escape') { closeMenu(); closeTOC(); clearSearch(); }
+  if (e.key === 'f' && !e.ctrlKey && !e.metaKey) toggleFullscreen();
+  if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); toggleMenu(); toggleSearch(); }
+});
+
+// ── TOUCH / SWIPE ──
+let tx0 = 0;
+document.getElementById('stage').addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
+document.getElementById('stage').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx0;
+  if (Math.abs(dx) > 55) { dx < 0 ? goNext() : goPrev(); }
+});
+
+// Mouse drag
+let mx0 = 0, dragging = false;
+document.getElementById('stage').addEventListener('mousedown', e => { mx0 = e.clientX; dragging = true; });
+document.addEventListener('mouseup', e => {
+  if (!dragging) return;
+  dragging = false;
+  const dx = e.clientX - mx0;
+  if (Math.abs(dx) > 70) { dx < 0 ? goNext() : goPrev(); }
+});
+
+// Click outside menu to close
+document.addEventListener('click', e => {
+  if (!e.target.closest('#menu-root')) closeMenu();
+});
+
+// ── RESIZE ──
+let rTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(rTimer);
+  rTimer = setTimeout(async () => {
+    if (!pdfDoc) return;
+    await sizeBook();
+    await renderSpread(currentSpread, 'none');
+  }, 180);
+});
 </script>
 </body>
 </html>
