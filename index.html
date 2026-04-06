@@ -10,41 +10,40 @@
 
 /* ── THEMES ── */
 [data-theme="dark"] {
-  --bg: #0a0a0a;
-  --surface: #161616;
-  --surface2: #1e1e1e;
-  --surface3: #252525;
-  --border: #2a2a2a;
-  --text: #f0f0f0;
-  --text2: #888;
-  --muted: #444;
-  --accent: #e8ff00;
-  --accent2: #ff3c3c;
-  --shadow: rgba(0,0,0,0.75);
-  --shadow2: rgba(0,0,0,0.4);
-  --spine: rgba(0,0,0,0.6);
-  --page-shadow: 0 0 60px rgba(0,0,0,0.8);
-  --highlight: rgba(232,255,0,0.1);
-  --float-bg: rgba(18,18,18,0.92);
+  --bg:         #0a0a0a;
+  --surface:    #141414;
+  --surface2:   #1c1c1c;
+  --surface3:   #242424;
+  --border:     #2c2c2c;
+  --text:       #f0f0f0;
+  --text2:      #888;
+  --muted:      #3a3a3a;
+  --accent:     #e8ff00;
+  --accent2:    #ff3c3c;
+  --shadow:     rgba(0,0,0,0.8);
+  --shadow2:    rgba(0,0,0,0.45);
+  --spine-col:  rgba(0,0,0,0.55);
+  --highlight:  rgba(232,255,0,0.08);
+  --float-bg:   rgba(16,16,16,0.94);
+  --panel-bg:   #111111;
 }
-
 [data-theme="light"] {
-  --bg: #d6d0c8;
-  --surface: rgba(250,248,245,0.96);
-  --surface2: #f0ede8;
-  --surface3: #e4e0da;
-  --border: #ccc8c0;
-  --text: #1a1a1a;
-  --text2: #666;
-  --muted: #aaa;
-  --accent: #b8860b;
-  --accent2: #cc2222;
-  --shadow: rgba(0,0,0,0.25);
-  --shadow2: rgba(0,0,0,0.12);
-  --spine: rgba(0,0,0,0.15);
-  --page-shadow: 0 0 40px rgba(0,0,0,0.3);
-  --highlight: rgba(184,134,11,0.12);
-  --float-bg: rgba(250,248,245,0.94);
+  --bg:         #cdc8bf;
+  --surface:    rgba(248,246,242,0.97);
+  --surface2:   #edeae4;
+  --surface3:   #e2dfd8;
+  --border:     #cbc7bf;
+  --text:       #1a1a1a;
+  --text2:      #666;
+  --muted:      #bbb;
+  --accent:     #b07d00;
+  --accent2:    #cc2222;
+  --shadow:     rgba(0,0,0,0.28);
+  --shadow2:    rgba(0,0,0,0.14);
+  --spine-col:  rgba(0,0,0,0.12);
+  --highlight:  rgba(176,125,0,0.1);
+  --float-bg:   rgba(248,246,242,0.95);
+  --panel-bg:   #f5f2ee;
 }
 
 html, body {
@@ -53,585 +52,405 @@ html, body {
   background: var(--bg);
   font-family: 'DM Sans', sans-serif;
   color: var(--text);
-  transition: background 0.35s;
+  transition: background 0.3s;
 }
 
-/* Subtle grain overlay */
+/* grain */
 body::after {
   content: '';
   position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.032'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9000;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9000;
 }
 
-/* ══════════════════════════════════════
-   BOOK STAGE — full viewport
-══════════════════════════════════════ */
+/* ══════════════════════
+   STAGE
+══════════════════════ */
 #stage {
   position: fixed; inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   background: var(--bg);
-  transition: background 0.35s;
+  transition: background 0.3s;
 }
 
-/* Drop zone */
+/* ── DROP ZONE ── */
 #drop-zone {
   position: fixed; inset: 0;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 20px; cursor: pointer;
-  z-index: 10;
-  transition: background 0.2s;
+  gap: 18px; cursor: pointer; z-index: 10;
 }
 #drop-zone.drag-over { background: var(--highlight); }
 #drop-zone.hidden { display: none; }
 
-.dz-icon { font-size: 4rem; opacity: 0.18; }
+.dz-icon  { font-size: 3.8rem; opacity: 0.15; }
 .dz-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.8rem;
-  letter-spacing: 0.12em;
-  opacity: 0.3;
+  font-size: 2.6rem; letter-spacing: 0.14em; opacity: 0.25;
 }
 .dz-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text2);
-  opacity: 0.6;
+  font-family: 'DM Mono', monospace; font-size: 0.66rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--text2); opacity: 0.6;
 }
 .dz-btn {
-  margin-top: 8px;
-  background: var(--accent);
-  color: #000;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 13px 32px;
-  border: none; border-radius: 4px;
-  cursor: pointer;
+  margin-top: 6px;
+  background: var(--accent); color: #000;
+  font-family: 'DM Mono', monospace; font-size: 0.72rem;
+  font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 13px 34px; border: none; border-radius: 4px; cursor: pointer;
   transition: all 0.15s;
 }
-.dz-btn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 10px 32px var(--shadow2); }
+.dz-btn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 10px 30px var(--shadow2); }
 
-/* ── BOOK WRAPPER ── */
-#book-wrap {
-  display: none;
-  position: relative;
-  /* sized by JS to fill viewport exactly */
-}
+/* ── BOOK ── */
+#book-wrap { display: none; position: relative; }
 #book-wrap.active { display: flex; align-items: stretch; }
 
-/* Pages */
 .page-side {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  background: #fff;
-  transition: background 0.3s;
+  flex: 1; position: relative; overflow: hidden;
+  background: #fff; transition: background 0.3s;
 }
 
-/* Spine */
 #spine {
-  width: 0;
-  position: relative;
-  flex-shrink: 0;
-  background: transparent;
-  z-index: 5;
+  width: 0; position: relative; flex-shrink: 0; z-index: 5;
 }
 #spine::before {
   content: '';
-  position: absolute;
-  top: 0; left: -8px;
-  width: 16px; height: 100%;
+  position: absolute; top: 0; left: -9px;
+  width: 18px; height: 100%;
   background: linear-gradient(to right,
-    rgba(0,0,0,0.22) 0%,
-    var(--spine) 40%,
-    var(--spine) 60%,
-    rgba(0,0,0,0.22) 100%
+    rgba(0,0,0,0.18) 0%,
+    var(--spine-col) 42%,
+    var(--spine-col) 58%,
+    rgba(0,0,0,0.18) 100%
   );
   pointer-events: none;
 }
 
-/* Canvas inside page */
-.page-canvas {
-  display: block;
-  width: 100%; height: 100%;
-  object-fit: contain;
-}
-
-/* Page number */
 .pg-num {
-  position: absolute;
-  bottom: 10px;
-  left: 0; right: 0;
-  text-align: center;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.58rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  pointer-events: none;
-  z-index: 3;
-  transition: color 0.2s;
+  position: absolute; bottom: 9px;
+  left: 0; right: 0; text-align: center;
+  font-family: 'DM Mono', monospace; font-size: 0.56rem;
+  color: var(--muted); letter-spacing: 0.1em;
+  pointer-events: none; z-index: 3; transition: color 0.2s;
 }
 .pg-num.hit { color: var(--accent); }
 
 /* ── FLIP GHOST ── */
 #flip-ghost {
-  position: fixed;
-  top: 0; height: 100vh;
-  pointer-events: none;
-  z-index: 100;
-  perspective: 2400px;
-  display: none;
+  position: fixed; top: 0; height: 100vh;
+  pointer-events: none; z-index: 200; perspective: 2600px; display: none;
 }
 #flip-ghost.active { display: block; }
 #flip-page {
   width: 100%; height: 100%;
-  transform-style: preserve-3d;
-  transform-origin: left center;
-  will-change: transform;
-  overflow: hidden;
-  backface-visibility: hidden;
+  transform-style: preserve-3d; will-change: transform;
+  overflow: hidden; backface-visibility: hidden;
 }
-#flip-page canvas {
-  width: 100%; height: 100%;
-  display: block;
-  object-fit: fill;
-}
+#flip-page canvas { width: 100%; height: 100%; display: block; }
 
-/* ══════════════════════════════════════
-   FLOATING NAV BUTTONS
-══════════════════════════════════════ */
-.float-nav {
-  position: fixed;
-  bottom: 28px;
-  z-index: 500;
-  display: none;
-  gap: 8px;
-}
-.float-nav.active { display: flex; }
-.float-nav.left-side  { left: 28px; }
-.float-nav.right-side { right: 28px; }
-
-.fnav-btn {
-  width: 42px; height: 42px;
-  border-radius: 50%;
+/* ══════════════════════
+   FLOATING BURGER
+══════════════════════ */
+#burger {
+  position: fixed; top: 18px; left: 18px; z-index: 800;
+  width: 44px; height: 44px; border-radius: 50%;
   background: var(--float-bg);
   border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 0.85rem;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 5px; padding: 14px 12px;
   cursor: pointer;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: all 0.15s;
-  box-shadow: 0 4px 20px var(--shadow2);
-}
-.fnav-btn:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.08); }
-.fnav-btn:disabled { opacity: 0.25; pointer-events: none; }
-
-/* Progress strip */
-#progress-bar-wrap {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 3px;
-  background: transparent;
-  z-index: 500;
-  display: none;
-  cursor: pointer;
-}
-#progress-bar-wrap.active { display: block; }
-#progress-fill {
-  height: 100%;
-  background: var(--accent);
-  transition: width 0.3s ease;
-  pointer-events: none;
-}
-#progress-bar-wrap:hover { height: 6px; }
-
-/* Page counter chip */
-#page-chip {
-  position: fixed;
-  bottom: 38px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--float-bg);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 5px 14px;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--text2);
-  letter-spacing: 0.08em;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  display: none;
-  z-index: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-  box-shadow: 0 4px 16px var(--shadow2);
-  white-space: nowrap;
-}
-#page-chip.active { display: block; }
-#page-chip:hover { border-color: var(--accent); color: var(--accent); }
-#page-chip input {
-  background: none; border: none; outline: none;
-  font: inherit; color: inherit; width: 30px;
-  text-align: center; cursor: pointer;
-}
-#page-chip input:focus { color: var(--accent); }
-
-/* ══════════════════════════════════════
-   FLOATING MENU (burger)
-══════════════════════════════════════ */
-#menu-root {
-  position: fixed;
-  top: 20px; right: 20px;
-  z-index: 800;
-}
-
-#menu-trigger {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  background: var(--float-bg);
-  border: 1px solid var(--border);
-  color: var(--text);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
   box-shadow: 0 4px 24px var(--shadow2);
   transition: all 0.2s;
-  flex-direction: column;
-  gap: 4px;
-  padding: 13px 12px;
 }
+#burger:hover { border-color: var(--accent); }
+#burger.open  { background: var(--accent); border-color: var(--accent); }
 
-#menu-trigger:hover { border-color: var(--accent); }
-#menu-trigger.open { background: var(--accent); border-color: var(--accent); }
-
-.burger-bar {
-  display: block;
-  width: 18px; height: 2px;
-  background: var(--text);
-  border-radius: 2px;
-  transition: all 0.25s;
-  transform-origin: center;
+.bb {
+  display: block; width: 18px; height: 2px;
+  background: var(--text); border-radius: 2px;
+  transition: all 0.25s; transform-origin: center;
 }
-#menu-trigger.open .burger-bar { background: #000; }
-#menu-trigger.open .burger-bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-#menu-trigger.open .burger-bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
-#menu-trigger.open .burger-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+#burger.open .bb { background: #000; }
+#burger.open .bb:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+#burger.open .bb:nth-child(2) { opacity: 0; transform: scaleX(0); }
+#burger.open .bb:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* Menu panel */
-#menu-panel {
-  position: absolute;
-  top: 54px; right: 0;
-  width: 240px;
-  background: var(--float-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 16px 48px var(--shadow);
+/* ══════════════════════
+   LEFT SIDE PANEL
+══════════════════════ */
+#side-panel {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: 300px;
+  background: var(--panel-bg);
+  border-right: 1px solid var(--border);
+  z-index: 750;
+  display: flex; flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 6px 0 40px var(--shadow);
   overflow: hidden;
-  transform-origin: top right;
-  transform: scale(0.85);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), opacity 0.18s;
 }
-#menu-panel.open {
-  transform: scale(1);
-  opacity: 1;
-  pointer-events: all;
-}
+#side-panel.open { transform: translateX(0); }
 
-.menu-section {
-  padding: 6px 0;
+/* panel header */
+.panel-head {
+  padding: 18px 20px 14px;
   border-bottom: 1px solid var(--border);
-}
-.menu-section:last-child { border-bottom: none; }
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  font-size: 0.82rem;
-  color: var(--text);
-  cursor: pointer;
-  transition: background 0.1s;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-}
-.menu-item:hover { background: var(--highlight); color: var(--accent); }
-.menu-item.active-item { color: var(--accent); }
-
-.menu-icon {
-  width: 20px;
-  text-align: center;
-  font-size: 1rem;
   flex-shrink: 0;
-  opacity: 0.7;
+  display: flex; align-items: center; gap: 10px;
+}
+.panel-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem; letter-spacing: 0.1em; flex: 1;
+}
+.panel-logo span {
+  background: var(--accent); color: #000;
+  font-family: 'DM Mono', monospace; font-size: 0.52rem;
+  font-weight: 500; letter-spacing: 0.1em;
+  padding: 2px 5px; border-radius: 2px; vertical-align: middle;
+  margin-left: 6px;
 }
 
-.menu-label { flex: 1; }
-.menu-badge {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.58rem;
-  background: var(--surface3);
-  border-radius: 10px;
-  padding: 2px 7px;
-  color: var(--text2);
-}
-.menu-badge.on { background: var(--accent); color: #000; }
-
-/* Search panel inside menu */
-#search-panel {
-  display: none;
-  padding: 12px 14px;
+/* panel sections */
+.panel-section {
+  padding: 14px 16px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
-#search-panel.open { display: block; }
+.sec-label {
+  font-family: 'DM Mono', monospace; font-size: 0.56rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--text2); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
+/* search inside panel */
 .search-row {
-  display: flex;
-  gap: 6px;
-  align-items: center;
+  display: flex; gap: 6px; align-items: center;
 }
 .search-row input {
   flex: 1;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.72rem;
-  padding: 8px 12px;
-  border-radius: 4px;
-  outline: none;
-  transition: border-color 0.2s;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.72rem;
+  padding: 9px 12px; border-radius: 4px; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.search-row input:focus { border-color: var(--accent); }
+.search-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(232,255,0,0.07); }
 .search-row input::placeholder { color: var(--muted); }
-.search-go {
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  cursor: pointer;
-  white-space: nowrap;
+.s-btn {
+  background: var(--accent); color: #000;
+  font-family: 'DM Mono', monospace; font-size: 0.66rem; font-weight: 500;
+  letter-spacing: 0.06em; padding: 9px 13px;
+  border: none; border-radius: 4px; cursor: pointer; white-space: nowrap;
 }
-.search-go:hover { background: #fff; }
+.s-btn:hover { background: #fff; }
 
-#search-results-menu {
-  max-height: 200px;
-  overflow-y: auto;
-  margin-top: 8px;
+#search-count-label {
+  font-family: 'DM Mono', monospace; font-size: 0.6rem;
+  color: var(--accent); margin-top: 6px; display: none;
 }
-#search-results-menu::-webkit-scrollbar { width: 3px; }
-#search-results-menu::-webkit-scrollbar-thumb { background: var(--border); }
+
+#search-results-list {
+  max-height: 180px; overflow-y: auto; margin-top: 8px;
+}
+#search-results-list::-webkit-scrollbar { width: 3px; }
+#search-results-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 .sr-item {
-  padding: 8px 4px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background 0.1s;
+  padding: 8px 6px; border-bottom: 1px solid var(--border);
+  cursor: pointer; border-radius: 3px; transition: background 0.1s;
 }
 .sr-item:last-child { border-bottom: none; }
 .sr-item:hover { background: var(--highlight); }
-.sr-page { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 2px; }
-.sr-text { font-size: 0.72rem; color: var(--text2); line-height: 1.4; }
-.sr-text mark { background: var(--accent); color: #000; border-radius: 2px; padding: 0 2px; }
-.sr-empty { padding: 14px 4px; text-align: center; font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+.sr-pg { font-family: 'DM Mono', monospace; font-size: 0.57rem; color: var(--accent); margin-bottom: 2px; }
+.sr-txt { font-size: 0.71rem; color: var(--text2); line-height: 1.4; }
+.sr-txt mark { background: var(--accent); color: #000; border-radius: 2px; padding: 0 2px; }
+.sr-empty { padding: 12px 6px; text-align: center; font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--muted); }
 
-/* ══════════════════════════════════════
-   TOC PANEL — floating overlay
-══════════════════════════════════════ */
-#toc-panel {
-  position: fixed;
-  top: 0; left: 0; bottom: 0;
-  width: 300px;
-  background: var(--float-bg);
-  border-right: 1px solid var(--border);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  z-index: 700;
-  display: flex;
-  flex-direction: column;
-  transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-  box-shadow: 8px 0 40px var(--shadow);
+/* action rows */
+.action-row {
+  display: flex; gap: 8px; margin-top: 0;
 }
-#toc-panel.open { transform: translateX(0); }
+.act-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.66rem;
+  letter-spacing: 0.06em; padding: 10px 10px; border-radius: 4px;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.act-btn:hover { border-color: var(--accent); color: var(--accent); }
+.act-btn.on   { background: var(--accent); border-color: var(--accent); color: #000; }
+.act-btn .aico { font-size: 1rem; }
 
-#toc-header {
-  padding: 20px 20px 14px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
+/* page jump */
+.page-jump-row {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--text2);
 }
-.toc-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.3rem;
-  letter-spacing: 0.08em;
+.page-jump-row input {
+  width: 52px; background: var(--surface2);
+  border: 1px solid var(--border); color: var(--text);
+  font-family: 'DM Mono', monospace; font-size: 0.72rem;
+  padding: 7px 8px; border-radius: 4px; outline: none;
+  text-align: center; transition: border-color 0.2s;
 }
-.toc-close {
-  width: 28px; height: 28px;
-  background: var(--surface3);
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  font-size: 0.7rem;
-  color: var(--text2);
-  transition: all 0.15s;
+.page-jump-row input:focus { border-color: var(--accent); }
+.page-jump-row .go-btn {
+  background: var(--surface3); border: 1px solid var(--border);
+  color: var(--text2); font-family: 'DM Mono', monospace; font-size: 0.63rem;
+  padding: 7px 12px; border-radius: 4px; cursor: pointer; transition: all 0.15s;
 }
-.toc-close:hover { border-color: var(--accent2); color: var(--accent2); }
+.page-jump-row .go-btn:hover { border-color: var(--accent); color: var(--accent); }
+#page-total-label { color: var(--muted); }
+
+/* ── TOC INSIDE PANEL ── */
+#toc-wrap {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0;
+}
+.toc-sec-head {
+  padding: 12px 16px 8px;
+  font-family: 'DM Mono', monospace; font-size: 0.56rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--text2);
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; gap: 6px;
+}
+.toc-sec-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
 #toc-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 6px 0 20px;
+  flex: 1; overflow-y: auto; padding: 4px 0 20px;
 }
 #toc-list::-webkit-scrollbar { width: 3px; }
 #toc-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 .toc-item {
-  display: flex;
-  align-items: baseline;
-  gap: 0;
-  padding: 8px 20px;
-  font-size: 0.8rem;
-  color: var(--text2);
+  display: flex; align-items: baseline; gap: 0;
+  padding: 8px 16px;
+  font-size: 0.78rem; color: var(--text2);
   cursor: pointer;
   border-left: 2px solid transparent;
-  transition: all 0.12s;
-  line-height: 1.4;
+  transition: all 0.12s; line-height: 1.4;
 }
 .toc-item:hover { background: var(--highlight); color: var(--text); border-left-color: var(--accent); }
 .toc-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--highlight); }
-.toc-item[data-level="2"] { padding-left: 32px; font-size: 0.75rem; }
-.toc-item[data-level="3"] { padding-left: 44px; font-size: 0.72rem; opacity: 0.85; }
-
-.toc-item-title { flex: 1; min-width: 0; }
-.toc-dots {
-  flex: 1;
-  border-bottom: 1px dotted var(--border);
-  margin: 0 8px;
-  position: relative;
-  top: -3px;
-  min-width: 12px;
-}
-.toc-pg {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.6rem;
-  color: var(--muted);
-  flex-shrink: 0;
-  letter-spacing: 0.05em;
-}
-.toc-item.active .toc-pg { color: var(--accent); }
-
+.toc-item[data-level="2"] { padding-left: 26px; font-size: 0.73rem; }
+.toc-item[data-level="3"] { padding-left: 38px; font-size: 0.7rem; opacity: 0.82; }
+.ti-title { flex: 1; min-width: 0; }
+.ti-dots  { flex: 1; border-bottom: 1px dotted var(--border); margin: 0 7px; position: relative; top: -2px; min-width: 10px; }
+.ti-pg    { font-family: 'DM Mono', monospace; font-size: 0.59rem; color: var(--muted); flex-shrink: 0; }
+.toc-item.active .ti-pg { color: var(--accent); }
 .toc-empty {
-  padding: 40px 20px;
-  text-align: center;
-  font-family: 'DM Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--muted);
-  line-height: 2.2;
+  padding: 36px 16px; text-align: center;
+  font-family: 'DM Mono', monospace; font-size: 0.64rem; color: var(--muted); line-height: 2.2;
 }
 
-/* Backdrop for TOC */
-#toc-backdrop {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5);
-  z-index: 699;
-  backdrop-filter: blur(2px);
+/* ══════════════════════
+   BACKDROP
+══════════════════════ */
+#backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 749;
+  backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
 }
-#toc-backdrop.open { display: block; }
+#backdrop.open { display: block; }
 
-/* ── LOADING ── */
+/* ══════════════════════
+   FLOATING NAV BUTTONS
+══════════════════════ */
+.float-nav {
+  position: fixed; bottom: 26px; z-index: 500;
+  display: none; gap: 8px;
+}
+.float-nav.active { display: flex; }
+.float-nav.side-left  { left: 18px; }
+.float-nav.side-right { right: 18px; }
+
+.fnav {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--float-bg); border: 1px solid var(--border);
+  color: var(--text); font-size: 0.82rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 18px var(--shadow2);
+  transition: all 0.15s;
+}
+.fnav:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.08); }
+.fnav:disabled { opacity: 0.22; pointer-events: none; }
+
+/* ── PAGE CHIP (center bottom) ── */
+#page-chip {
+  position: fixed; bottom: 34px; left: 50%; transform: translateX(-50%);
+  background: var(--float-bg); border: 1px solid var(--border); border-radius: 20px;
+  padding: 5px 16px;
+  font-family: 'DM Mono', monospace; font-size: 0.63rem; color: var(--text2);
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  display: none; z-index: 500;
+  box-shadow: 0 4px 16px var(--shadow2);
+  white-space: nowrap; pointer-events: none;
+}
+#page-chip.active { display: block; }
+
+/* ── PROGRESS BAR ── */
+#prog-wrap {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 3px; background: var(--muted);
+  z-index: 500; display: none; cursor: pointer;
+  transition: height 0.15s;
+}
+#prog-wrap.active { display: block; }
+#prog-wrap:hover { height: 6px; }
+#prog-fill {
+  height: 100%; background: var(--accent);
+  transition: width 0.28s ease; pointer-events: none;
+}
+
+/* ══════════════════════
+   LOADING
+══════════════════════ */
 #loading {
-  position: fixed; inset: 0;
-  background: var(--bg);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  z-index: 600;
+  position: fixed; inset: 0; background: var(--bg);
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px; z-index: 600;
 }
 #loading.active { display: flex; }
-.loader-ring {
-  width: 44px; height: 44px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.75s linear infinite;
+.l-ring {
+  width: 42px; height: 42px; border: 3px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loader-text { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; }
+.l-txt { font-family: 'DM Mono', monospace; font-size: 0.66rem; color: var(--muted); letter-spacing: 0.1em; }
 
-/* ── TOAST ── */
+/* ══════════════════════
+   TOAST
+══════════════════════ */
 .toast {
-  position: fixed;
-  bottom: 22px; left: 50%;
-  transform: translateX(-50%);
-  background: var(--float-bg);
-  border: 1px solid var(--border);
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--float-bg); border: 1px solid var(--border);
   border-bottom: 2px solid var(--accent);
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  padding: 9px 20px;
-  border-radius: 20px;
-  z-index: 9999;
-  backdrop-filter: blur(16px);
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
-  pointer-events: none;
+  color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.67rem;
+  padding: 8px 20px; border-radius: 20px; z-index: 9999;
+  backdrop-filter: blur(16px); letter-spacing: 0.06em; white-space: nowrap;
+  animation: tIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both; pointer-events: none;
 }
 .toast.err { border-bottom-color: var(--accent2); }
-.toast.out { animation: toastOut 0.25s ease both; }
-@keyframes toastIn  { from { opacity:0; transform:translateX(-50%) translateY(12px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
-@keyframes toastOut { from { opacity:1; transform:translateX(-50%) translateY(0); } to { opacity:0; transform:translateX(-50%) translateY(8px); } }
-
-/* Flip keyframes (used by JS-driven GSAP-style animation) */
-@keyframes flipForward {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(-180deg); }
-}
-@keyframes flipBack {
-  0%   { transform: rotateY(0deg); }
-  100% { transform: rotateY(180deg); }
-}
+.toast.out { animation: tOut 0.25s ease both; }
+@keyframes tIn  { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+@keyframes tOut { from { opacity:1; transform:translateX(-50%) translateY(0); } to { opacity:0; transform:translateX(-50%) translateY(8px); } }
 
 * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 </style>
 </head>
 <body>
 
-<!-- Stage -->
+<!-- ── STAGE ── -->
 <div id="stage">
 
-  <!-- Drop zone -->
   <div id="drop-zone"
     onclick="triggerUpload()"
     ondragover="onDragOver(event)"
@@ -639,128 +458,130 @@ body::after {
     ondrop="onDrop(event)">
     <div class="dz-icon">📖</div>
     <div class="dz-title">FOLIO</div>
-    <div class="dz-sub">Drop a PDF here or click to browse</div>
-    <button class="dz-btn" onclick="event.stopPropagation();triggerUpload()">Open PDF File</button>
+    <div class="dz-sub">Drop a PDF or click to open</div>
+    <button class="dz-btn" onclick="event.stopPropagation();triggerUpload()">Open PDF</button>
   </div>
 
-  <!-- Book -->
   <div id="book-wrap">
     <div class="page-side" id="side-left">
-      <canvas id="canvas-left" class="page-canvas"></canvas>
+      <canvas id="canvas-left"></canvas>
       <div class="pg-num" id="pgnum-left"></div>
     </div>
     <div id="spine"></div>
     <div class="page-side" id="side-right">
-      <canvas id="canvas-right" class="page-canvas"></canvas>
+      <canvas id="canvas-right"></canvas>
       <div class="pg-num" id="pgnum-right"></div>
     </div>
   </div>
+
 </div>
 
-<!-- Flip ghost -->
+<!-- ── FLIP GHOST ── -->
 <div id="flip-ghost">
   <div id="flip-page">
     <canvas id="canvas-ghost"></canvas>
   </div>
 </div>
 
-<!-- TOC backdrop -->
-<div id="toc-backdrop" onclick="closeTOC()"></div>
+<!-- ── BACKDROP ── -->
+<div id="backdrop" onclick="closePanel()"></div>
 
-<!-- TOC panel -->
-<div id="toc-panel">
-  <div id="toc-header">
-    <div class="toc-title">Contents</div>
-    <div class="toc-close" onclick="closeTOC()">✕</div>
+<!-- ══════════════════════════════════
+     LEFT SIDE PANEL
+══════════════════════════════════ -->
+<div id="side-panel">
+
+  <!-- Header -->
+  <div class="panel-head">
+    <div class="panel-logo">FOLIO <span>PDF</span></div>
   </div>
-  <div id="toc-list"></div>
+
+  <!-- Search -->
+  <div class="panel-section">
+    <div class="sec-label">Search</div>
+    <div class="search-row">
+      <input id="search-input" type="text" placeholder="Search in document…"
+        oninput="onSearchInput()" onkeydown="onSearchKey(event)">
+      <button class="s-btn" onclick="doSearch()">Go</button>
+    </div>
+    <div id="search-count-label"></div>
+    <div id="search-results-list"></div>
+  </div>
+
+  <!-- Page Jump -->
+  <div class="panel-section">
+    <div class="sec-label">Go to Page</div>
+    <div class="page-jump-row">
+      <input id="page-jump" type="number" min="1" placeholder="Pg"
+        onkeydown="if(event.key==='Enter')jumpToPage(this.value)">
+      <span id="page-total-label">/ 0</span>
+      <button class="go-btn" onclick="jumpToPage(document.getElementById('page-jump').value)">Go</button>
+    </div>
+  </div>
+
+  <!-- View controls -->
+  <div class="panel-section">
+    <div class="sec-label">View</div>
+    <div class="action-row">
+      <button class="act-btn" id="theme-btn" onclick="toggleTheme()">
+        <span class="aico">◐</span> Dark
+      </button>
+      <button class="act-btn" id="fs-btn" onclick="toggleFullscreen()">
+        <span class="aico">⛶</span> Fullscreen
+      </button>
+    </div>
+  </div>
+
+  <!-- Open PDF -->
+  <div class="panel-section">
+    <div class="sec-label">File</div>
+    <div class="action-row">
+      <button class="act-btn" onclick="triggerUpload();closePanel()">
+        <span class="aico">⊕</span> Open PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- TOC (fills remaining height) -->
+  <div id="toc-wrap">
+    <div class="toc-sec-head">Table of Contents</div>
+    <div id="toc-list">
+      <div class="toc-empty">Open a PDF to see<br>the table of contents</div>
+    </div>
+  </div>
+
 </div>
 
-<!-- Loading -->
+<!-- ── BURGER ── -->
+<div id="burger" onclick="togglePanel()" title="Menu">
+  <span class="bb"></span>
+  <span class="bb"></span>
+  <span class="bb"></span>
+</div>
+
+<!-- ── FLOATING NAV ── -->
+<div class="float-nav side-left" id="nav-left">
+  <button class="fnav" id="btn-first" onclick="goFirst()" title="First">⟨⟨</button>
+  <button class="fnav" id="btn-prev"  onclick="goPrev()"  title="Previous">◀</button>
+</div>
+
+<div class="float-nav side-right" id="nav-right">
+  <button class="fnav" id="btn-next" onclick="goNext()" title="Next">▶</button>
+  <button class="fnav" id="btn-last" onclick="goLast()" title="Last">⟩⟩</button>
+</div>
+
+<!-- ── PAGE CHIP ── -->
+<div id="page-chip"><span id="chip-text">Pg 1 / 1</span></div>
+
+<!-- ── PROGRESS ── -->
+<div id="prog-wrap" onclick="seekProgress(event)">
+  <div id="prog-fill"></div>
+</div>
+
+<!-- ── LOADING ── -->
 <div id="loading">
-  <div class="loader-ring"></div>
-  <div class="loader-text" id="loading-text">Loading…</div>
-</div>
-
-<!-- Floating nav — left -->
-<div class="float-nav left-side" id="nav-left">
-  <button class="fnav-btn" id="btn-first" title="First page" onclick="goFirst()">⟨⟨</button>
-  <button class="fnav-btn" id="btn-prev"  title="Previous spread" onclick="goPrev()">◀</button>
-</div>
-
-<!-- Floating nav — right -->
-<div class="float-nav right-side" id="nav-right">
-  <button class="fnav-btn" id="btn-next" title="Next spread" onclick="goNext()">▶</button>
-  <button class="fnav-btn" id="btn-last" title="Last page" onclick="goLast()">⟩⟩</button>
-</div>
-
-<!-- Page chip -->
-<div id="page-chip" title="Click to jump to page">
-  <span id="chip-label">Pg </span><input id="page-jump" type="number" min="1" onkeydown="if(event.key==='Enter')jumpToPage(this.value)"> / <span id="chip-total">0</span>
-</div>
-
-<!-- Progress bar -->
-<div id="progress-bar-wrap" onclick="seekProgress(event)" title="Click to seek">
-  <div id="progress-fill"></div>
-</div>
-
-<!-- Floating menu -->
-<div id="menu-root">
-  <div id="menu-trigger" onclick="toggleMenu()" title="Menu">
-    <span class="burger-bar"></span>
-    <span class="burger-bar"></span>
-    <span class="burger-bar"></span>
-  </div>
-  <div id="menu-panel">
-
-    <!-- Search -->
-    <div class="menu-section">
-      <button class="menu-item" onclick="toggleSearch()">
-        <span class="menu-icon">⌕</span>
-        <span class="menu-label">Search</span>
-        <span class="menu-badge" id="search-badge"></span>
-      </button>
-      <div id="search-panel">
-        <div class="search-row">
-          <input id="search-input" type="text" placeholder="Search document…"
-            oninput="onSearchInput()" onkeydown="onSearchKey(event)">
-          <button class="search-go" onclick="doSearch()">Go</button>
-        </div>
-        <div id="search-results-menu"></div>
-      </div>
-    </div>
-
-    <!-- TOC -->
-    <div class="menu-section">
-      <button class="menu-item" onclick="openTOC();closeMenu()">
-        <span class="menu-icon">☰</span>
-        <span class="menu-label">Table of Contents</span>
-      </button>
-    </div>
-
-    <!-- View -->
-    <div class="menu-section">
-      <button class="menu-item" onclick="toggleTheme()">
-        <span class="menu-icon">◐</span>
-        <span class="menu-label">Dark / Light</span>
-        <span class="menu-badge" id="theme-badge">Dark</span>
-      </button>
-      <button class="menu-item" onclick="toggleFullscreen()">
-        <span class="menu-icon">⛶</span>
-        <span class="menu-label">Fullscreen</span>
-        <span class="menu-badge" id="fs-badge">Off</span>
-      </button>
-    </div>
-
-    <!-- File -->
-    <div class="menu-section">
-      <button class="menu-item" onclick="triggerUpload();closeMenu()">
-        <span class="menu-icon">⊕</span>
-        <span class="menu-label">Open PDF</span>
-      </button>
-    </div>
-
-  </div>
+  <div class="l-ring"></div>
+  <div class="l-txt" id="l-txt">Loading…</div>
 </div>
 
 <input type="file" id="file-input" accept=".pdf,application/pdf" style="display:none" onchange="onFileSelect(event)">
@@ -771,140 +592,108 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 // ── STATE ──
-let pdfDoc       = null;
-let totalPages   = 0;
+let pdfDoc        = null;
+let totalPages    = 0;
 let currentSpread = 0;
-let pageTexts    = {};
+let pageTexts     = {};
 let searchResults = [];
-let searchQuery  = '';
-let isAnimating  = false;
-let isDark       = true;
-let tocOpen      = false;
-let menuOpen     = false;
-let searchPanelOpen = false;
-let singlePage   = false; // narrow screens
+let searchQuery   = '';
+let isAnimating   = false;
+let isDark        = true;
+let panelOpen     = false;
+let singlePage    = false;
 
 // ── SPREAD HELPERS ──
 function spreadPages(s) {
-  if (singlePage) {
-    return { left: null, right: s + 1 };
-  }
-  return { left: s * 2 + 1, right: s * 2 + 2 };
+  if (singlePage) return { left: null, right: s + 1 };
+  const l = s * 2 + 1, r = s * 2 + 2;
+  return { left: l <= totalPages ? l : null, right: r <= totalPages ? r : null };
 }
 function totalSpreads() {
-  if (singlePage) return totalPages;
-  return Math.ceil(totalPages / 2);
+  return singlePage ? totalPages : Math.ceil(totalPages / 2);
 }
 
-// ── SIZING ──
-function computeLayout() {
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-  // single-page mode on narrow screens or portrait
-  singlePage = W < 600;
-  return { W, H };
-}
-
+// ── LAYOUT ──
 async function sizeBook() {
   if (!pdfDoc) return;
-  const { W, H } = computeLayout();
+  const W = window.innerWidth, H = window.innerHeight;
+  singlePage = W < 600;
+
   const page = await pdfDoc.getPage(1);
   const vp   = page.getViewport({ scale: 1 });
-  const ratio = vp.height / vp.width; // page aspect
+  const ratio = vp.height / vp.width;
 
-  const bookWrap = document.getElementById('book-wrap');
-  const sLeft    = document.getElementById('side-left');
-  const sRight   = document.getElementById('side-right');
-  const spine    = document.getElementById('spine');
+  const wrap  = document.getElementById('book-wrap');
+  const sL    = document.getElementById('side-left');
+  const sR    = document.getElementById('side-right');
+  const spine = document.getElementById('spine');
 
   if (singlePage) {
-    // Single page fills screen
-    sLeft.style.display = 'none';
+    sL.style.display = 'none';
     spine.style.display = 'none';
-    sRight.style.display = 'block';
-    sRight.style.width = W + 'px';
-    sRight.style.height = H + 'px';
-    bookWrap.style.width  = W + 'px';
-    bookWrap.style.height = H + 'px';
+    Object.assign(sR.style, { display:'block', width:W+'px', height:H+'px' });
+    Object.assign(wrap.style, { width:W+'px', height:H+'px' });
   } else {
-    sLeft.style.display = 'block';
+    sL.style.display = 'block';
     spine.style.display = 'block';
 
-    // Two pages side by side flush to screen
-    // Determine scale: fit height first, then check if width fits
-    const pageW_byH = H / ratio;
-    const totalW_byH = pageW_byH * 2; // no padding
-
+    // Fit two pages flush — no padding, just fill W×H
     let pageW, pageH;
-    if (totalW_byH <= W) {
-      // height-constrained
-      pageH = H;
-      pageW = pageW_byH;
+    const byH = H / ratio;
+    if (byH * 2 <= W) {
+      pageH = H; pageW = byH;
     } else {
-      // width-constrained
-      pageW = W / 2;
-      pageH = pageW * ratio;
+      pageW = W / 2; pageH = pageW * ratio;
     }
-
-    [sLeft, sRight].forEach(el => {
-      el.style.width  = pageW + 'px';
-      el.style.height = pageH + 'px';
-    });
-    bookWrap.style.width  = (pageW * 2) + 'px';
-    bookWrap.style.height = pageH + 'px';
+    [sL, sR].forEach(el => Object.assign(el.style, { width:pageW+'px', height:pageH+'px' }));
+    Object.assign(wrap.style, { width:(pageW*2)+'px', height:pageH+'px' });
     spine.style.width = '0px';
   }
 }
 
 // ── FILE ──
-function triggerUpload() {
-  document.getElementById('file-input').click();
-}
-function onFileSelect(e) {
-  const f = e.target.files[0];
-  if (f) loadPDF(f);
-  e.target.value = '';
-}
-function onDragOver(e) {
-  e.preventDefault();
-  document.getElementById('drop-zone').classList.add('drag-over');
-}
-function onDragLeave() {
-  document.getElementById('drop-zone').classList.remove('drag-over');
-}
+function triggerUpload() { document.getElementById('file-input').click(); }
+function onFileSelect(e) { const f=e.target.files[0]; if(f)loadPDF(f); e.target.value=''; }
+function onDragOver(e)  { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
+function onDragLeave()  { document.getElementById('drop-zone').classList.remove('drag-over'); }
 function onDrop(e) {
   e.preventDefault();
   document.getElementById('drop-zone').classList.remove('drag-over');
   const f = e.dataTransfer.files[0];
-  if (f && f.type === 'application/pdf') loadPDF(f);
+  if (f && f.type==='application/pdf') loadPDF(f);
   else showToast('Please drop a PDF file', true);
 }
 
 async function loadPDF(file) {
   showLoading('Loading PDF…');
   try {
-    const buf = await file.arrayBuffer();
-    pdfDoc = await pdfjsLib.getDocument({ data: buf }).promise;
-    totalPages = pdfDoc.numPages;
+    pdfDoc        = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+    totalPages    = pdfDoc.numPages;
     currentSpread = 0;
-    pageTexts = {};
+    pageTexts     = {};
     searchResults = [];
-    searchQuery = '';
+    searchQuery   = '';
 
+    // Reset search UI
+    document.getElementById('search-input').value = '';
+    document.getElementById('search-results-list').innerHTML = '';
+    document.getElementById('search-count-label').style.display = 'none';
+
+    // Show book UI
     document.getElementById('drop-zone').classList.add('hidden');
     document.getElementById('book-wrap').classList.add('active');
-    ['nav-left','nav-right','page-chip','progress-bar-wrap'].forEach(id => {
+    ['nav-left','nav-right','page-chip','prog-wrap'].forEach(id => {
       document.getElementById(id).classList.add('active');
     });
-    document.getElementById('chip-total').textContent = totalPages;
+    document.getElementById('page-total-label').textContent = '/ ' + totalPages;
     document.getElementById('page-jump').max = totalPages;
 
     await sizeBook();
-    extractAllText();
-    await extractTOC();
     hideLoading();
     await renderSpread(0, 'none');
-    showToast(file.name.replace('.pdf', ''));
+    extractAllText();   // async background
+    await extractTOC();
+    showToast(file.name.replace(/\.pdf$/i,''));
   } catch(err) {
     hideLoading();
     showToast('Failed to load PDF', true);
@@ -913,11 +702,11 @@ async function loadPDF(file) {
 }
 
 // ── RENDER ──
-async function renderSpread(s, dir) {
+async function renderSpread(s, _dir) {
   const { left, right } = spreadPages(s);
   await Promise.all([
-    left  ? renderPage(left,  'canvas-left',  'side-left')  : clearSide('canvas-left'),
-    right ? renderPage(right, 'canvas-right', 'side-right') : clearSide('canvas-right'),
+    left  ? renderPage(left,  'canvas-left',  'side-left')  : clearCanvas('canvas-left',  'side-left'),
+    right ? renderPage(right, 'canvas-right', 'side-right') : clearCanvas('canvas-right', 'side-right'),
   ]);
   setLabel('pgnum-left',  left);
   setLabel('pgnum-right', right);
@@ -928,19 +717,16 @@ async function renderSpread(s, dir) {
   if (searchQuery) markSearchHits();
 }
 
-function setLabel(id, pageNum) {
+function setLabel(id, pg) {
   const el = document.getElementById(id);
-  if (!pageNum) { el.textContent = ''; return; }
-  el.textContent = pageNum;
-  const hit = searchResults.some(r => r.page === pageNum);
-  el.classList.toggle('hit', hit);
+  el.textContent = pg || '';
+  el.classList.toggle('hit', !!pg && searchResults.some(r => r.page === pg));
 }
 
 async function renderPage(pageNum, canvasId, sideId) {
   const side   = document.getElementById(sideId);
   const canvas = document.getElementById(canvasId);
-  const W = side.clientWidth;
-  const H = side.clientHeight;
+  const W = side.clientWidth, H = side.clientHeight;
   if (!W || !H) return;
 
   const page = await pdfDoc.getPage(pageNum);
@@ -950,72 +736,55 @@ async function renderPage(pageNum, canvasId, sideId) {
 
   canvas.width  = svp.width;
   canvas.height = svp.height;
-  canvas.style.width  = W + 'px';
-  canvas.style.height = H + 'px';
+  canvas.style.cssText = `width:${W}px;height:${H}px;display:block;`;
 
-  // Fill background (for light mode)
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = isDark ? '#1a1a1a' : '#ffffff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   await page.render({ canvasContext: ctx, viewport: svp }).promise;
 }
 
-function clearSide(canvasId) {
-  const canvas = document.getElementById(canvasId);
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function clearCanvas(canvasId, sideId) {
+  const side = document.getElementById(sideId);
+  const cv   = document.getElementById(canvasId);
+  cv.width = side.clientWidth || 1; cv.height = side.clientHeight || 1;
+  cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
 }
 
 // ── FLIP ANIMATION ──
-async function animatedFlip(fromSpread, toSpread) {
+async function animatedFlip(toSpread) {
   if (isAnimating) return;
   isAnimating = true;
-  const dir = toSpread > fromSpread ? 'next' : 'prev';
+  const dir = toSpread > currentSpread ? 'next' : 'prev';
 
-  // Which side turns?
-  const turningCanvas = dir === 'next'
-    ? document.getElementById('canvas-right')
-    : document.getElementById('canvas-left');
-  const turningside   = dir === 'next'
-    ? document.getElementById('side-right')
-    : document.getElementById('side-left');
+  const srcSide   = dir==='next' ? document.getElementById('side-right') : document.getElementById('side-left');
+  const srcCanvas = dir==='next' ? document.getElementById('canvas-right') : document.getElementById('canvas-left');
 
-  const ghost     = document.getElementById('flip-ghost');
-  const flipPage  = document.getElementById('flip-page');
-  const gc        = document.getElementById('canvas-ghost');
+  const ghost    = document.getElementById('flip-ghost');
+  const flipPage = document.getElementById('flip-page');
+  const gc       = document.getElementById('canvas-ghost');
+  const rect     = srcSide.getBoundingClientRect();
 
-  // Copy turning page into ghost canvas
-  const rect = turningside.getBoundingClientRect();
-  ghost.style.left    = rect.left + 'px';
-  ghost.style.width   = rect.width + 'px';
-  gc.width  = turningCanvas.width  || rect.width;
-  gc.height = turningCanvas.height || rect.height;
-  gc.style.width  = rect.width + 'px';
-  gc.style.height = rect.height + 'px';
-  gc.getContext('2d').drawImage(turningCanvas, 0, 0, gc.width, gc.height);
+  // Position ghost over the turning page
+  ghost.style.cssText = `position:fixed;top:0;left:${rect.left}px;width:${rect.width}px;height:${rect.height}px;pointer-events:none;z-index:200;perspective:2600px;display:block;`;
+  gc.width  = srcCanvas.width  || rect.width;
+  gc.height = srcCanvas.height || rect.height;
+  gc.style.cssText = `width:${rect.width}px;height:${rect.height}px;display:block;`;
+  gc.getContext('2d').drawImage(srcCanvas, 0, 0, gc.width, gc.height);
 
-  // Set perspective origin
-  flipPage.style.transformOrigin = dir === 'next' ? 'left center' : 'right center';
-  flipPage.style.transition = 'none';
-  flipPage.style.transform  = 'rotateY(0deg)';
-  ghost.classList.add('active');
+  flipPage.style.cssText = `width:100%;height:100%;transform-style:preserve-3d;will-change:transform;overflow:hidden;backface-visibility:hidden;transform-origin:${dir==='next'?'left':'right'} center;transition:none;transform:rotateY(0deg);`;
 
-  // Add gradient shadow on ghost
-  gc.getContext('2d');
-
-  // Render new spread underneath (invisible during flip)
+  // Render next spread underneath
   currentSpread = toSpread;
   await renderSpread(toSpread, dir);
 
-  // Animate the flip
-  requestAnimationFrame(() => {
-    flipPage.style.transition = 'transform 0.52s cubic-bezier(0.645,0.045,0.355,1.000)';
-    flipPage.style.transform  = dir === 'next' ? 'rotateY(-180deg)' : 'rotateY(180deg)';
-  });
+  // Kick off flip
+  await new Promise(r => requestAnimationFrame(() => { requestAnimationFrame(r); }));
+  flipPage.style.transition = 'transform 0.5s cubic-bezier(0.645,0.045,0.355,1.000)';
+  flipPage.style.transform  = dir==='next' ? 'rotateY(-180deg)' : 'rotateY(180deg)';
 
-  await sleep(540);
-  ghost.classList.remove('active');
+  await sleep(520);
+  ghost.style.display = 'none';
   flipPage.style.transition = 'none';
   isAnimating = false;
 }
@@ -1023,41 +792,20 @@ async function animatedFlip(fromSpread, toSpread) {
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ── NAVIGATION ──
-async function goNext() {
-  if (isAnimating || !pdfDoc || currentSpread >= totalSpreads() - 1) return;
-  const prev = currentSpread;
-  await animatedFlip(prev, currentSpread + 1);
-}
-async function goPrev() {
-  if (isAnimating || !pdfDoc || currentSpread <= 0) return;
-  const prev = currentSpread;
-  await animatedFlip(prev, currentSpread - 1);
-}
-async function goFirst() {
-  if (isAnimating || !pdfDoc || currentSpread === 0) return;
-  currentSpread = 0;
-  await renderSpread(0, 'none');
-}
-async function goLast() {
-  if (isAnimating || !pdfDoc) return;
-  const last = totalSpreads() - 1;
-  if (currentSpread === last) return;
-  currentSpread = last;
-  await renderSpread(last, 'none');
-}
+async function goNext()  { if(!pdfDoc||isAnimating||currentSpread>=totalSpreads()-1) return; await animatedFlip(currentSpread+1); }
+async function goPrev()  { if(!pdfDoc||isAnimating||currentSpread<=0) return; await animatedFlip(currentSpread-1); }
+async function goFirst() { if(!pdfDoc||isAnimating||currentSpread===0) return; currentSpread=0; await renderSpread(0,'none'); }
+async function goLast()  { if(!pdfDoc||isAnimating) return; const l=totalSpreads()-1; if(currentSpread===l)return; currentSpread=l; await renderSpread(l,'none'); }
+
 async function goToPage(pageNum, animate) {
   if (!pdfDoc) return;
-  const p = Math.max(1, Math.min(totalPages, pageNum));
-  const spread = singlePage ? p - 1 : Math.floor((p - 1) / 2);
-  if (spread === currentSpread) return;
-  const diff = Math.abs(spread - currentSpread);
-  if (animate && diff === 1) {
-    await animatedFlip(currentSpread, spread);
-  } else {
-    currentSpread = spread;
-    await renderSpread(spread, 'none');
-  }
+  const p = Math.max(1, Math.min(totalPages, +pageNum));
+  const s = singlePage ? p-1 : Math.floor((p-1)/2);
+  if (s === currentSpread) return;
+  if (animate && Math.abs(s-currentSpread)===1) await animatedFlip(s);
+  else { currentSpread=s; await renderSpread(s,'none'); }
 }
+
 async function jumpToPage(val) {
   const n = parseInt(val);
   if (!isNaN(n)) await goToPage(n, true);
@@ -1065,25 +813,26 @@ async function jumpToPage(val) {
 
 // ── PROGRESS ──
 function updateProgress() {
-  const pct = totalSpreads() <= 1 ? 100 : (currentSpread / (totalSpreads() - 1)) * 100;
-  document.getElementById('progress-fill').style.width = pct + '%';
+  const pct = totalSpreads()<=1 ? 100 : (currentSpread/(totalSpreads()-1))*100;
+  document.getElementById('prog-fill').style.width = pct+'%';
 }
 function seekProgress(e) {
   if (!pdfDoc) return;
   const rect = e.currentTarget.getBoundingClientRect();
-  const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  const s    = Math.round(pct * (totalSpreads() - 1));
-  if (s !== currentSpread) { currentSpread = s; renderSpread(s, 'none'); }
+  const pct  = Math.max(0, Math.min(1,(e.clientX-rect.left)/rect.width));
+  const s    = Math.round(pct*(totalSpreads()-1));
+  if (s!==currentSpread) { currentSpread=s; renderSpread(s,'none'); }
 }
 function updateNavBtns() {
-  document.getElementById('btn-first').disabled = currentSpread === 0;
-  document.getElementById('btn-prev').disabled  = currentSpread === 0;
-  document.getElementById('btn-next').disabled  = currentSpread >= totalSpreads() - 1;
-  document.getElementById('btn-last').disabled  = currentSpread >= totalSpreads() - 1;
+  document.getElementById('btn-first').disabled = currentSpread===0;
+  document.getElementById('btn-prev').disabled  = currentSpread===0;
+  document.getElementById('btn-next').disabled  = currentSpread>=totalSpreads()-1;
+  document.getElementById('btn-last').disabled  = currentSpread>=totalSpreads()-1;
 }
 function updateChip() {
   const { left, right } = spreadPages(currentSpread);
-  const pg = left || right || 1;
+  const pg = left||right||1;
+  document.getElementById('chip-text').textContent = `Pg ${pg} / ${totalPages}`;
   document.getElementById('page-jump').value = pg;
 }
 
@@ -1108,255 +857,212 @@ async function flattenOutline(items, level, container) {
     let pageNum = null;
     try {
       if (item.dest) {
-        const dest = typeof item.dest === 'string'
-          ? await pdfDoc.getDestination(item.dest)
-          : item.dest;
+        const dest = typeof item.dest==='string'
+          ? await pdfDoc.getDestination(item.dest) : item.dest;
         if (dest) pageNum = await pdfDoc.getPageIndex(dest[0]) + 1;
       }
     } catch(_) {}
 
     const div = document.createElement('div');
-    div.className = 'toc-item';
-    div.dataset.level = level;
-    div.dataset.page  = pageNum || '';
-
-    div.innerHTML = `
-      <span class="toc-item-title">${escHtml(item.title || '—')}</span>
-      <span class="toc-dots"></span>
-      <span class="toc-pg">${pageNum || ''}</span>
-    `;
+    div.className      = 'toc-item';
+    div.dataset.level  = level;
+    div.dataset.page   = pageNum || '';
+    div.innerHTML = `<span class="ti-title">${escHtml(item.title||'—')}</span><span class="ti-dots"></span><span class="ti-pg">${pageNum||''}</span>`;
     div.onclick = () => {
       if (pageNum) goToPage(pageNum, true);
-      document.querySelectorAll('.toc-item').forEach(e => e.classList.remove('active'));
+      document.querySelectorAll('.toc-item').forEach(e=>e.classList.remove('active'));
       div.classList.add('active');
-      closeTOC();
+      closePanel();
     };
     container.appendChild(div);
-
-    if (item.items && item.items.length && level < 3) {
-      await flattenOutline(item.items, level + 1, container);
-    }
+    if (item.items && item.items.length && level < 3)
+      await flattenOutline(item.items, level+1, container);
   }
 }
 
 function syncTOCActive() {
   const { left, right } = spreadPages(currentSpread);
-  const items = document.querySelectorAll('.toc-item[data-page]');
-  let lastActive = null;
+  const cur = left || right || 1;
+  const items = [...document.querySelectorAll('.toc-item[data-page]')];
+  let lastMatch = null;
   items.forEach(el => {
-    const pg = parseInt(el.dataset.page);
-    if (pg && (pg === left || pg === right)) lastActive = el;
-    else if (pg && pg <= (left || right || 1)) lastActive = el;
     el.classList.remove('active');
+    const pg = parseInt(el.dataset.page);
+    if (pg && pg <= cur) lastMatch = el;
   });
-  if (lastActive) lastActive.classList.add('active');
+  if (lastMatch) {
+    lastMatch.classList.add('active');
+    // Scroll into view gently if panel open
+    if (panelOpen) lastMatch.scrollIntoView({ block:'nearest', behavior:'smooth' });
+  }
 }
 
-function openTOC() {
-  document.getElementById('toc-panel').classList.add('open');
-  document.getElementById('toc-backdrop').classList.add('open');
-  tocOpen = true;
+// ── PANEL ──
+function togglePanel() {
+  panelOpen ? closePanel() : openPanel();
 }
-function closeTOC() {
-  document.getElementById('toc-panel').classList.remove('open');
-  document.getElementById('toc-backdrop').classList.remove('open');
-  tocOpen = false;
+function openPanel() {
+  panelOpen = true;
+  document.getElementById('side-panel').classList.add('open');
+  document.getElementById('backdrop').classList.add('open');
+  document.getElementById('burger').classList.add('open');
+}
+function closePanel() {
+  panelOpen = false;
+  document.getElementById('side-panel').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('open');
+  document.getElementById('burger').classList.remove('open');
 }
 
 // ── TEXT EXTRACTION ──
 async function extractAllText() {
-  for (let i = 1; i <= totalPages; i++) {
+  for (let i=1; i<=totalPages; i++) {
     try {
-      const page    = await pdfDoc.getPage(i);
-      const content = await page.getTextContent();
-      pageTexts[i]  = content.items.map(it => it.str).join(' ');
-    } catch(_) { pageTexts[i] = ''; }
+      const pg = await pdfDoc.getPage(i);
+      const ct = await pg.getTextContent();
+      pageTexts[i] = ct.items.map(it=>it.str).join(' ');
+    } catch(_) { pageTexts[i]=''; }
   }
 }
 
 // ── SEARCH ──
-let searchDebounce;
-function onSearchInput() {
-  clearTimeout(searchDebounce);
-  searchDebounce = setTimeout(doSearch, 320);
-}
-function onSearchKey(e) {
-  if (e.key === 'Escape') clearSearch();
-  if (e.key === 'Enter')  doSearch();
-}
+let sdeb;
+function onSearchInput() { clearTimeout(sdeb); sdeb=setTimeout(doSearch,320); }
+function onSearchKey(e)  { if(e.key==='Escape')clearSearch(); if(e.key==='Enter')doSearch(); }
 
 function doSearch() {
   const q = document.getElementById('search-input').value.trim();
   searchQuery = q;
   if (!q || !pdfDoc) { clearSearch(); return; }
-
   searchResults = [];
-  const lower = q.toLowerCase();
-  for (let pg = 1; pg <= totalPages; pg++) {
-    const text = pageTexts[pg] || '';
-    const low  = text.toLowerCase();
-    let idx = 0;
-    while ((idx = low.indexOf(lower, idx)) !== -1) {
-      const snippet = text.substring(Math.max(0, idx - 38), idx + q.length + 55);
-      searchResults.push({ page: pg, snippet, q });
-      idx += lower.length;
+  const low = q.toLowerCase();
+  for (let pg=1; pg<=totalPages; pg++) {
+    const txt  = pageTexts[pg]||'';
+    const ltxt = txt.toLowerCase();
+    let idx=0;
+    while ((idx=ltxt.indexOf(low,idx))!==-1) {
+      const snip = txt.substring(Math.max(0,idx-36), idx+q.length+52);
+      searchResults.push({ page:pg, snip, q });
+      idx += low.length;
     }
   }
-
-  renderSearchPanel();
+  renderSearchResults();
   markSearchHits();
-
-  const badge = document.getElementById('search-badge');
-  badge.textContent = searchResults.length ? searchResults.length : '';
-  badge.className   = 'menu-badge' + (searchResults.length ? ' on' : '');
+  const cl = document.getElementById('search-count-label');
+  if (searchResults.length) {
+    cl.textContent = `${searchResults.length} result${searchResults.length!==1?'s':''} found`;
+    cl.style.display = '';
+  } else {
+    cl.style.display = 'none';
+  }
 }
 
-function renderSearchPanel() {
-  const panel = document.getElementById('search-results-menu');
+function renderSearchResults() {
+  const el = document.getElementById('search-results-list');
   if (!searchResults.length) {
-    panel.innerHTML = '<div class="sr-empty">No results</div>';
-    return;
+    el.innerHTML = '<div class="sr-empty">No results found</div>'; return;
   }
-  const shown = searchResults.slice(0, 50);
-  panel.innerHTML = shown.map(r => {
-    const hl = r.snippet.replace(new RegExp(escReg(r.q),'gi'), m => `<mark>${escHtml(m)}</mark>`);
-    return `<div class="sr-item" onclick="goToPage(${r.page},true);closeMenu()">
-      <div class="sr-page">Pg ${r.page}</div>
-      <div class="sr-text">…${hl}…</div>
+  el.innerHTML = searchResults.slice(0,50).map(r => {
+    const hl = r.snip.replace(new RegExp(escReg(r.q),'gi'), m=>`<mark>${escHtml(m)}</mark>`);
+    return `<div class="sr-item" onclick="goToPage(${r.page},true);closePanel()">
+      <div class="sr-pg">Page ${r.page}</div>
+      <div class="sr-txt">…${hl}…</div>
     </div>`;
   }).join('');
-  if (searchResults.length > 50) {
-    panel.innerHTML += `<div class="sr-empty">+${searchResults.length - 50} more</div>`;
-  }
+  if (searchResults.length>50)
+    el.innerHTML += `<div class="sr-empty">+${searchResults.length-50} more results</div>`;
 }
 
 function markSearchHits() {
-  const { left, right } = spreadPages(currentSpread);
-  document.getElementById('pgnum-left').classList.toggle('hit', searchResults.some(r => r.page === left));
-  document.getElementById('pgnum-right').classList.toggle('hit', searchResults.some(r => r.page === right));
+  const {left,right} = spreadPages(currentSpread);
+  document.getElementById('pgnum-left').classList.toggle('hit',  left  && searchResults.some(r=>r.page===left));
+  document.getElementById('pgnum-right').classList.toggle('hit', right && searchResults.some(r=>r.page===right));
 }
 
 function clearSearch() {
-  searchResults = [];
-  searchQuery   = '';
-  document.getElementById('search-input').value = '';
-  document.getElementById('search-results-menu').innerHTML = '';
-  document.getElementById('search-badge').textContent = '';
-  document.getElementById('search-badge').className = 'menu-badge';
-  document.getElementById('pgnum-left').classList.remove('hit');
-  document.getElementById('pgnum-right').classList.remove('hit');
-}
-
-function toggleSearch() {
-  searchPanelOpen = !searchPanelOpen;
-  document.getElementById('search-panel').classList.toggle('open', searchPanelOpen);
-  if (searchPanelOpen) setTimeout(() => document.getElementById('search-input').focus(), 80);
-}
-
-// ── MENU ──
-function toggleMenu() {
-  menuOpen = !menuOpen;
-  document.getElementById('menu-trigger').classList.toggle('open', menuOpen);
-  document.getElementById('menu-panel').classList.toggle('open', menuOpen);
-}
-function closeMenu() {
-  menuOpen = false;
-  document.getElementById('menu-trigger').classList.remove('open');
-  document.getElementById('menu-panel').classList.remove('open');
+  searchResults=[]; searchQuery='';
+  document.getElementById('search-input').value='';
+  document.getElementById('search-results-list').innerHTML='';
+  document.getElementById('search-count-label').style.display='none';
+  ['pgnum-left','pgnum-right'].forEach(id=>document.getElementById(id).classList.remove('hit'));
 }
 
 // ── THEME ──
 function toggleTheme() {
   isDark = !isDark;
-  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  document.getElementById('theme-badge').textContent = isDark ? 'Dark' : 'Light';
-  if (pdfDoc) renderSpread(currentSpread, 'none');
+  document.documentElement.setAttribute('data-theme', isDark?'dark':'light');
+  const btn = document.getElementById('theme-btn');
+  btn.innerHTML = `<span class="aico">◐</span> ${isDark?'Dark':'Light'}`;
+  if (pdfDoc) renderSpread(currentSpread,'none');
 }
 
 // ── FULLSCREEN ──
 function toggleFullscreen() {
   const el = document.documentElement;
-  if (!document.fullscreenElement) {
-    (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen).call(el);
-  } else {
-    (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
-  }
+  if (!document.fullscreenElement)
+    (el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen).call(el);
+  else
+    (document.exitFullscreen||document.webkitExitFullscreen||document.mozCancelFullScreen).call(document);
 }
 document.addEventListener('fullscreenchange', () => {
   const on = !!document.fullscreenElement;
-  document.getElementById('fs-badge').textContent = on ? 'On' : 'Off';
-  document.getElementById('fs-badge').className   = 'menu-badge' + (on ? ' on' : '');
-  if (pdfDoc) { setTimeout(() => { sizeBook().then(() => renderSpread(currentSpread, 'none')); }, 100); }
+  document.getElementById('fs-btn').innerHTML = `<span class="aico">⛶</span> ${on?'Exit FS':'Fullscreen'}`;
+  document.getElementById('fs-btn').classList.toggle('on', on);
+  if (pdfDoc) setTimeout(()=>sizeBook().then(()=>renderSpread(currentSpread,'none')),120);
 });
 
 // ── LOADING ──
-function showLoading(msg) {
-  document.getElementById('loading-text').textContent = msg;
-  document.getElementById('loading').classList.add('active');
-}
-function hideLoading() { document.getElementById('loading').classList.remove('active'); }
+function showLoading(msg) { document.getElementById('l-txt').textContent=msg; document.getElementById('loading').classList.add('active'); }
+function hideLoading()    { document.getElementById('loading').classList.remove('active'); }
 
 // ── TOAST ──
-let toastTimer;
-function showToast(msg, err = false) {
-  const old = document.querySelector('.toast');
-  if (old) old.remove();
+let tTimer;
+function showToast(msg, err=false) {
+  const old = document.querySelector('.toast'); if(old) old.remove();
   const t = document.createElement('div');
-  t.className = 'toast' + (err ? ' err' : '');
-  t.textContent = msg;
+  t.className='toast'+(err?' err':''); t.textContent=msg;
   document.body.appendChild(t);
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3000);
+  clearTimeout(tTimer);
+  tTimer = setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(),280); }, 3000);
 }
 
-// ── ESCAPE HELPERS ──
+// ── HELPERS ──
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escReg(s)  { return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 
 // ── KEYBOARD ──
 document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
-  if (e.key === 'ArrowRight' || e.key === 'PageDown') goNext();
-  if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   goPrev();
-  if (e.key === 'Home') goFirst();
-  if (e.key === 'End')  goLast();
-  if (e.key === 'Escape') { closeMenu(); closeTOC(); clearSearch(); }
-  if (e.key === 'f' && !e.ctrlKey && !e.metaKey) toggleFullscreen();
-  if ((e.ctrlKey || e.metaKey) && e.key === 'f') { e.preventDefault(); toggleMenu(); toggleSearch(); }
+  if (e.target.tagName==='INPUT') return;
+  if (e.key==='ArrowRight'||e.key==='PageDown') goNext();
+  if (e.key==='ArrowLeft' ||e.key==='PageUp')   goPrev();
+  if (e.key==='Home') goFirst();
+  if (e.key==='End')  goLast();
+  if (e.key==='Escape') { closePanel(); clearSearch(); }
+  if (e.key==='f'&&!e.ctrlKey&&!e.metaKey) toggleFullscreen();
+  if ((e.ctrlKey||e.metaKey)&&e.key==='f') { e.preventDefault(); openPanel(); setTimeout(()=>document.getElementById('search-input').focus(),350); }
 });
 
-// ── TOUCH / SWIPE ──
-let tx0 = 0;
-document.getElementById('stage').addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
-document.getElementById('stage').addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - tx0;
-  if (Math.abs(dx) > 55) { dx < 0 ? goNext() : goPrev(); }
+// ── SWIPE ──
+let tx0=0;
+document.getElementById('stage').addEventListener('touchstart', e=>{ tx0=e.touches[0].clientX; },{passive:true});
+document.getElementById('stage').addEventListener('touchend', e=>{
+  const dx=e.changedTouches[0].clientX-tx0;
+  if (Math.abs(dx)>55) { dx<0?goNext():goPrev(); }
 });
 
-// Mouse drag
-let mx0 = 0, dragging = false;
-document.getElementById('stage').addEventListener('mousedown', e => { mx0 = e.clientX; dragging = true; });
-document.addEventListener('mouseup', e => {
-  if (!dragging) return;
-  dragging = false;
-  const dx = e.clientX - mx0;
-  if (Math.abs(dx) > 70) { dx < 0 ? goNext() : goPrev(); }
-});
-
-// Click outside menu to close
-document.addEventListener('click', e => {
-  if (!e.target.closest('#menu-root')) closeMenu();
+let mx0=0, mdrag=false;
+document.getElementById('stage').addEventListener('mousedown', e=>{ mx0=e.clientX; mdrag=true; });
+document.addEventListener('mouseup', e=>{
+  if(!mdrag)return; mdrag=false;
+  const dx=e.clientX-mx0;
+  if(Math.abs(dx)>75){ dx<0?goNext():goPrev(); }
 });
 
 // ── RESIZE ──
 let rTimer;
-window.addEventListener('resize', () => {
+window.addEventListener('resize', ()=>{
   clearTimeout(rTimer);
-  rTimer = setTimeout(async () => {
-    if (!pdfDoc) return;
-    await sizeBook();
-    await renderSpread(currentSpread, 'none');
-  }, 180);
+  rTimer=setTimeout(async()=>{ if(pdfDoc){ await sizeBook(); await renderSpread(currentSpread,'none'); }},180);
 });
 </script>
 </body>
