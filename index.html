@@ -1,1 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOLIO — Book Reader</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── THEMES ── */
+[data-theme="dark"] {
+  --bg: #0c0c0c;
+  --bg2: #111111;
+  --surface: #161616;
+  --surface2: #1e1e1e;
+  --surface3: #252525;
+  --border: #2a2a2a;
+  --text: #f0f0f0;
+  --text2: #a0a0a0;
+  --muted: #555;
+  --accent: #e8ff00;
+  --accent2: #ff3c3c;
+  --page-bg: #1a1a1a;
+  --shadow: rgba(0,0,0,0.6);
+  --spine: #0a0a0a;
+  --highlight: rgba(232,255,0,0.08);
+}
+
+[data-theme="light"] {
+  --bg: #f0ede8;
+  --bg2: #e8e4de;
+  --surface: #faf9f7;
+  --surface2: #f0ede8;
+  --surface3: #e8e4de;
+  --border: #d8d4ce;
+  --text: #1a1a1a;
+  --text2: #666;
+  --muted: #aaa;
+  --accent: #c8a000;
+  --accent2: #cc2222;
+  --page-bg: #fff;
+  --shadow: rgba(0,0,0,0.2);
+  --spine: #c8c4be;
+  --highlight: rgba(200,160,0,0.12);
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ── LAYOUT ── */
+.app { display: flex; flex-direction: column; height: 100vh; }
+
+/* ── HEADER ── */
+header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+  z-index: 100;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.logo-badge {
+  background: var(--accent);
+  color: #000;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.header-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; }
+
+/* Search */
+.search-wrap {
+  flex: 1;
+  max-width: 320px;
+  position: relative;
+}
+
+.search-wrap input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 7px 36px 7px 12px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-wrap input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(232,255,0,0.08);
+}
+
+.search-wrap input::placeholder { color: var(--muted); }
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.search-count {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--accent);
+  pointer-events: none;
+  display: none;
+}
+
+/* Page nav */
+.page-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.page-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text2);
+}
+
+.page-input-wrap input {
+  width: 44px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  padding: 5px 6px;
+  border-radius: 4px;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.page-input-wrap input:focus { border-color: var(--accent); }
+
+/* Icon buttons */
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 0.9rem;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+.icon-btn.active { background: var(--accent); border-color: var(--accent); color: #000; }
+
+/* ── BODY ── */
+.body-wrap { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+/* ── TOC PANEL ── */
+.toc-panel {
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0;
+}
+
+.toc-panel.open {
+  width: 280px;
+  transform: translateX(0);
+}
+
+.toc-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.toc-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.toc-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.toc-list::-webkit-scrollbar { width: 3px; }
+.toc-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.toc-item {
+  padding: 8px 20px;
+  font-size: 0.78rem;
+  color: var(--text2);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  border-left: 2px solid transparent;
+  line-height: 1.4;
+}
+
+.toc-item:hover { background: var(--highlight); color: var(--text); border-left-color: var(--accent); }
+.toc-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--highlight); }
+.toc-item[data-level="2"] { padding-left: 32px; font-size: 0.73rem; }
+.toc-item[data-level="3"] { padding-left: 44px; font-size: 0.7rem; }
+
+.toc-empty {
+  padding: 40px 20px;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  line-height: 2;
+}
+
+/* ── MAIN READER ── */
+.reader-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+}
+
+/* Drop zone */
+.drop-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.drop-zone:hover { background: var(--highlight); }
+.drop-zone.drag-over { background: rgba(232,255,0,0.06); border: 2px dashed var(--accent); }
+
+.drop-icon {
+  font-size: 3.5rem;
+  opacity: 0.2;
+}
+
+.drop-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  opacity: 0.4;
+}
+
+.drop-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.upload-btn {
+  background: var(--accent);
+  color: #000;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.upload-btn:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow); }
+
+/* ── BOOK STAGE ── */
+.book-stage {
+  flex: 1;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  padding: 20px;
+}
+
+.book-stage.active { display: flex; }
+
+/* Book container — holds left and right pages */
+.book-container {
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  filter: drop-shadow(0 24px 60px var(--shadow));
+}
+
+/* Each page panel */
+.page-panel {
+  background: var(--page-bg);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: background 0.3s;
+}
+
+.page-panel.left {
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+}
+
+.page-panel.right {
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Book spine */
+.spine {
+  width: 12px;
+  background: linear-gradient(to right, var(--spine), var(--surface3), var(--spine));
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  box-shadow: inset -2px 0 6px rgba(0,0,0,0.3), inset 2px 0 6px rgba(0,0,0,0.3);
+}
+
+/* Canvas wrappers */
+.canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+canvas { display: block; }
+
+/* Page number label */
+.page-label {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Search highlight overlay */
+.search-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ── FLIP ANIMATION ── */
+.flip-container {
+  position: relative;
+  perspective: 2000px;
+}
+
+.page-turning {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  animation: flipLeft 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.page-turning.flip-right {
+  transform-origin: right center;
+  animation: flipRight 0.55s cubic-bezier(0.645, 0.045, 0.355, 1.000) forwards;
+}
+
+@keyframes flipLeft {
+  0%   { transform: rotateY(0deg);    box-shadow: -8px 0 20px rgba(0,0,0,0.3); }
+  50%  { transform: rotateY(-90deg);  box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+  100% { transform: rotateY(-180deg); box-shadow: 8px 0 20px rgba(0,0,0,0.1); }
+}
+
+@keyframes flipRight {
+  0%   { transform: rotateY(0deg);   box-shadow: 8px 0 20px rgba(0,0,0,0.3); }
+  50%  { transform: rotateY(90deg);  box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+  100% { transform: rotateY(180deg); box-shadow: -8px 0 20px rgba(0,0,0,0.1); }
+}
+
+/* ── BOTTOM BAR ── */
+.bottom-bar {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+.bottom-bar.active { display: flex; }
+
+/* Progress bar */
+.progress-track {
+  flex: 1;
+  max-width: 400px;
+  height: 3px;
+  background: var(--surface3);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s;
+  pointer-events: none;
+}
+
+.progress-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  transition: left 0.3s;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.nav-btn:disabled:hover { border-color: var(--border); color: var(--text); }
+
+/* ── SEARCH RESULTS PANEL ── */
+.search-results {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  width: 360px;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 200;
+  display: none;
+  box-shadow: 0 12px 40px var(--shadow);
+}
+
+.search-results.open { display: block; }
+.search-results::-webkit-scrollbar { width: 3px; }
+.search-results::-webkit-scrollbar-thumb { background: var(--border); }
+
+.sr-item {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.sr-item:hover { background: var(--highlight); }
+.sr-item:last-child { border-bottom: none; }
+
+.sr-page {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.sr-text {
+  font-size: 0.76rem;
+  color: var(--text2);
+  line-height: 1.4;
+}
+
+.sr-text mark {
+  background: var(--accent);
+  color: #000;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+.sr-empty {
+  padding: 24px;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+/* ── LOADING ── */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 50;
+  display: none;
+}
+
+.loading-overlay.active { display: flex; }
+
+.loader-ring {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  right: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  padding: 10px 18px;
+  border-radius: 4px;
+  z-index: 9999;
+  animation: toastIn 0.3s ease both;
+  letter-spacing: 0.05em;
+}
+
+.toast.err { border-left-color: var(--accent2); }
+.toast.out { animation: toastOut 0.3s ease both; }
+
+@keyframes toastIn  { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(16px); } }
+
+/* ── FULLSCREEN ── */
+:fullscreen .header-sep,
+:fullscreen header { border-bottom-color: var(--border); }
+
+/* Single page mode on narrow */
+@media (max-width: 700px) {
+  .page-panel.left { border-radius: 4px; border-right: 1px solid var(--border); display: none; }
+  .spine { display: none; }
+  .page-panel.right { border-radius: 4px; border-left: 1px solid var(--border); }
+}
+
+/* Scroll fix */
+* { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">FOLIO <span class="logo-badge">PDF</span></div>
+    <div class="header-sep"></div>
+
+    <!-- TOC toggle -->
+    <button class="icon-btn" id="toc-btn" title="Table of Contents" onclick="toggleTOC()">☰</button>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <input type="text" id="search-input" placeholder="Search in document…" oninput="onSearchInput()" onkeydown="onSearchKey(event)">
+      <span class="search-count" id="search-count"></span>
+      <span class="search-icon">⌕</span>
+    </div>
+
+    <!-- Page nav -->
+    <div class="page-nav">
+      <div class="page-input-wrap">
+        <span>Pg</span>
+        <input type="number" id="page-jump" min="1" onkeydown="if(event.key==='Enter')jumpToPage()" title="Jump to page">
+        <span id="total-pages-label" style="display:none">/ <span id="total-pages">0</span></span>
+      </div>
+      <div class="header-sep"></div>
+
+      <!-- Theme -->
+      <button class="icon-btn" id="theme-btn" title="Toggle theme" onclick="toggleTheme()">◐</button>
+      <!-- Fullscreen -->
+      <button class="icon-btn" id="fs-btn" title="Fullscreen" onclick="toggleFullscreen()">⛶</button>
+      <!-- Upload new -->
+      <button class="icon-btn" title="Open PDF" onclick="triggerUpload()">⊕</button>
+    </div>
+  </header>
+
+  <!-- SEARCH RESULTS DROPDOWN -->
+  <div class="search-results" id="search-results"></div>
+
+  <!-- BODY -->
+  <div class="body-wrap">
+
+    <!-- TOC -->
+    <aside class="toc-panel" id="toc-panel">
+      <div class="toc-header">Contents</div>
+      <div class="toc-list" id="toc-list"></div>
+    </aside>
+
+    <!-- READER -->
+    <div class="reader-area" id="reader-area">
+
+      <!-- Loading -->
+      <div class="loading-overlay" id="loading">
+        <div class="loader-ring"></div>
+        <div class="loader-text" id="loading-text">Loading PDF…</div>
+      </div>
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="drop-zone" onclick="triggerUpload()" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <div class="drop-icon">📖</div>
+        <div class="drop-title">OPEN A BOOK</div>
+        <div class="drop-sub">Drop a PDF or click to browse</div>
+        <button class="upload-btn" onclick="event.stopPropagation();triggerUpload()">Choose PDF File</button>
+      </div>
+
+      <!-- Book stage -->
+      <div class="book-stage" id="book-stage">
+        <div class="flip-container" id="flip-container">
+          <div class="book-container" id="book-container">
+            <!-- Left page -->
+            <div class="page-panel left" id="panel-left">
+              <div class="canvas-wrap" id="wrap-left">
+                <canvas id="canvas-left"></canvas>
+                <div class="search-overlay" id="overlay-left"></div>
+              </div>
+              <div class="page-label" id="label-left"></div>
+            </div>
+            <!-- Spine -->
+            <div class="spine"></div>
+            <!-- Right page -->
+            <div class="page-panel right" id="panel-right">
+              <div class="canvas-wrap" id="wrap-right">
+                <canvas id="canvas-right"></canvas>
+                <div class="search-overlay" id="overlay-right"></div>
+              </div>
+              <div class="page-label" id="label-right"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar" id="bottom-bar">
+    <button class="nav-btn" id="btn-first" onclick="goFirst()">|◀ First</button>
+    <button class="nav-btn" id="btn-prev"  onclick="goPrev()">◀ Prev</button>
+    <div class="progress-track" id="progress-track" onclick="seekProgress(event)">
+      <div class="progress-fill" id="progress-fill"></div>
+      <div class="progress-thumb" id="progress-thumb"></div>
+    </div>
+    <button class="nav-btn" id="btn-next"  onclick="goNext()">Next ▶</button>
+    <button class="nav-btn" id="btn-last"  onclick="goLast()">Last ▶|</button>
+  </div>
+
+</div>
+
+<!-- Hidden file input -->
+<input type="file" id="file-input" accept=".pdf,application/pdf" style="display:none" onchange="onFileSelect(event)">
+
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  // ── STATE ──
+  let pdfDoc = null;
+  let totalPages = 0;
+  let currentSpread = 0;   // spread index: 0 = pages 1-2, 1 = pages 3-4, etc.
+  let pageTexts = {};       // page number → extracted text
+  let tocItems = [];
+  let searchResults = [];
+  let searchQuery = '';
+  let isAnimating = false;
+  let isDark = true;
+
+  // ── COMPUTED: left/right page numbers for a spread ──
+  function spreadPages(s) {
+    const left  = s * 2 + 1;
+    const right = s * 2 + 2;
+    return { left: left <= totalPages ? left : null,
+             right: right <= totalPages ? right : null };
+  }
+
+  function totalSpreads() {
+    return Math.ceil(totalPages / 2);
+  }
+
+  // ── FILE HANDLING ──
+  function triggerUpload() {
+    document.getElementById('file-input').click();
+  }
+
+  function onFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) loadPDF(file);
+    e.target.value = '';
+  }
+
+  function onDragOver(e) {
+    e.preventDefault();
+    document.getElementById('drop-zone').classList.add('drag-over');
+  }
+
+  function onDragLeave() {
+    document.getElementById('drop-zone').classList.remove('drag-over');
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    document.getElementById('drop-zone').classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type === 'application/pdf') loadPDF(file);
+    else showToast('Please drop a PDF file', true);
+  }
+
+  // ── LOAD PDF ──
+  async function loadPDF(file) {
+    showLoading('Loading PDF…');
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      totalPages = pdfDoc.numPages;
+      currentSpread = 0;
+      pageTexts = {};
+      searchResults = [];
+      searchQuery = '';
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-count').style.display = 'none';
+      document.getElementById('search-results').classList.remove('open');
+
+      // Update UI
+      document.getElementById('total-pages').textContent = totalPages;
+      document.getElementById('total-pages-label').style.display = '';
+      document.getElementById('page-jump').max = totalPages;
+
+      // Show book
+      document.getElementById('drop-zone').style.display = 'none';
+      document.getElementById('book-stage').classList.add('active');
+      document.getElementById('bottom-bar').classList.add('active');
+
+      // Extract TOC
+      await extractTOC();
+
+      // Pre-extract text for search (async, non-blocking)
+      extractAllText();
+
+      // Compute book size from page 1
+      await sizePanels();
+
+      hideLoading();
+      await renderSpread(currentSpread, 'none');
+      showToast(`Loaded: ${file.name.replace('.pdf','')}`);
+    } catch(e) {
+      hideLoading();
+      showToast('Failed to load PDF', true);
+      console.error(e);
+    }
+  }
+
+  // ── SIZE PANELS based on page aspect ratio ──
+  async function sizePanels() {
+    const page = await pdfDoc.getPage(1);
+    const vp = page.getViewport({ scale: 1 });
+    const ratio = vp.height / vp.width;
+
+    const stage = document.getElementById('book-stage');
+    const availW = stage.clientWidth - 80;
+    const availH = stage.clientHeight - 20;
+
+    // Each page takes half the width minus spine
+    const pageW = Math.min((availW - 12) / 2, availH / ratio);
+    const pageH = pageW * ratio;
+
+    ['panel-left','panel-right'].forEach(id => {
+      const el = document.getElementById(id);
+      el.style.width = pageW + 'px';
+      el.style.height = pageH + 'px';
+    });
+
+    ['canvas-left','canvas-right'].forEach(id => {
+      const c = document.getElementById(id);
+      c.style.width = pageW + 'px';
+      c.style.height = pageH + 'px';
+    });
+  }
+
+  // ── RENDER SPREAD ──
+  async function renderSpread(spreadIdx, direction) {
+    const { left, right } = spreadPages(spreadIdx);
+    await Promise.all([
+      left  ? renderPage(left,  'canvas-left',  'wrap-left')  : clearCanvas('canvas-left',  'wrap-left'),
+      right ? renderPage(right, 'canvas-right', 'wrap-right') : clearCanvas('canvas-right', 'wrap-right'),
+    ]);
+
+    document.getElementById('label-left').textContent  = left  ? `${left}`  : '';
+    document.getElementById('label-right').textContent = right ? `${right}` : '';
+
+    updateProgress();
+    updateNavBtns();
+    updatePageJump();
+    if (searchQuery) overlaySearchHighlights();
+  }
+
+  async function renderPage(pageNum, canvasId, wrapId) {
+    const page = await pdfDoc.getPage(pageNum);
+    const panel = document.getElementById(wrapId).parentElement;
+    const w = panel.clientWidth;
+    const h = panel.clientHeight;
+
+    const viewport = page.getViewport({ scale: 1 });
+    const scaleX = w / viewport.width;
+    const scaleY = h / viewport.height;
+    const scale = Math.min(scaleX, scaleY);
+    const scaledVP = page.getViewport({ scale });
+
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    canvas.width  = scaledVP.width;
+    canvas.height = scaledVP.height;
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+
+    await page.render({ canvasContext: ctx, viewport: scaledVP }).promise;
+  }
+
+  function clearCanvas(canvasId, wrapId) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // ── FLIP ANIMATION ──
+  async function flipTo(newSpread, direction) {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    // Animate the turning page
+    const container = document.getElementById('book-container');
+
+    // Create a ghost page div for the flip
+    const ghost = document.createElement('div');
+    ghost.style.cssText = `
+      position:absolute; top:0; ${direction==='next'?'right':'left'}:0;
+      width:calc(50% - 6px); height:100%;
+      background: var(--page-bg);
+      border: 1px solid var(--border);
+      z-index:20;
+      backface-visibility:hidden;
+      transform-origin: ${direction==='next'?'left':'right'} center;
+      animation: ${direction==='next'?'flipLeft':'flipRight'} 0.5s cubic-bezier(0.645,0.045,0.355,1) forwards;
+      overflow:hidden;
+    `;
+
+    // Copy current canvas into ghost
+    const srcCanvas = direction === 'next'
+      ? document.getElementById('canvas-right')
+      : document.getElementById('canvas-left');
+    const ghostCanvas = document.createElement('canvas');
+    ghostCanvas.width  = srcCanvas.width;
+    ghostCanvas.height = srcCanvas.height;
+    ghostCanvas.style.cssText = 'width:100%;height:100%;object-fit:contain;';
+    ghostCanvas.getContext('2d').drawImage(srcCanvas, 0, 0);
+    ghost.appendChild(ghostCanvas);
+
+    // Add shadow for depth
+    const shadow = document.createElement('div');
+    shadow.style.cssText = `
+      position:absolute; inset:0; pointer-events:none;
+      background: linear-gradient(${direction==='next'?'to left':'to right'}, rgba(0,0,0,0.4), transparent 60%);
+      animation: ${direction==='next'?'flipLeft':'flipRight'} 0.5s cubic-bezier(0.645,0.045,0.355,1) forwards;
+      transform-origin: ${direction==='next'?'left':'right'} center;
+      z-index:21;
+    `;
+    container.style.position = 'relative';
+    container.appendChild(ghost);
+    container.appendChild(shadow);
+
+    currentSpread = newSpread;
+    await renderSpread(newSpread, direction);
+
+    await new Promise(r => setTimeout(r, 520));
+    ghost.remove();
+    shadow.remove();
+    isAnimating = false;
+  }
+
+  // ── NAVIGATION ──
+  async function goNext() {
+    if (isAnimating || currentSpread >= totalSpreads() - 1) return;
+    await flipTo(currentSpread + 1, 'next');
+  }
+
+  async function goPrev() {
+    if (isAnimating || currentSpread <= 0) return;
+    await flipTo(currentSpread - 1, 'prev');
+  }
+
+  async function goFirst() {
+    if (isAnimating || currentSpread === 0) return;
+    currentSpread = 0;
+    await renderSpread(0, 'none');
+  }
+
+  async function goLast() {
+    if (isAnimating) return;
+    const last = totalSpreads() - 1;
+    if (currentSpread === last) return;
+    currentSpread = last;
+    await renderSpread(last, 'none');
+  }
+
+  async function goToPage(pageNum) {
+    const spread = Math.floor((pageNum - 1) / 2);
+    if (spread === currentSpread) return;
+    const dir = spread > currentSpread ? 'next' : 'prev';
+    if (Math.abs(spread - currentSpread) === 1) {
+      await flipTo(spread, dir);
+    } else {
+      currentSpread = spread;
+      await renderSpread(spread, 'none');
+    }
+  }
+
+  async function jumpToPage() {
+    const val = parseInt(document.getElementById('page-jump').value);
+    if (!pdfDoc || isNaN(val)) return;
+    const clamped = Math.max(1, Math.min(totalPages, val));
+    await goToPage(clamped);
+  }
+
+  // ── PROGRESS ── 
+  function updateProgress() {
+    const pct = totalSpreads() <= 1 ? 100 : (currentSpread / (totalSpreads() - 1)) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-thumb').style.left = pct + '%';
+  }
+
+  function seekProgress(e) {
+    if (!pdfDoc) return;
+    const track = document.getElementById('progress-track');
+    const rect = track.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const spread = Math.round(pct * (totalSpreads() - 1));
+    if (spread !== currentSpread) { currentSpread = spread; renderSpread(spread, 'none'); }
+  }
+
+  function updateNavBtns() {
+    document.getElementById('btn-prev').disabled  = currentSpread === 0;
+    document.getElementById('btn-first').disabled = currentSpread === 0;
+    document.getElementById('btn-next').disabled  = currentSpread >= totalSpreads() - 1;
+    document.getElementById('btn-last').disabled  = currentSpread >= totalSpreads() - 1;
+  }
+
+  function updatePageJump() {
+    const { left } = spreadPages(currentSpread);
+    document.getElementById('page-jump').value = left || '';
+  }
+
+  // ── TOC ──
+  async function extractTOC() {
+    const tocEl = document.getElementById('toc-list');
+    tocItems = [];
+    try {
+      const outline = await pdfDoc.getOutline();
+      if (!outline || outline.length === 0) {
+        tocEl.innerHTML = '<div class="toc-empty">No table of contents<br>available in this PDF</div>';
+        return;
+      }
+      tocEl.innerHTML = '';
+      await flattenOutline(outline, 1, tocEl);
+    } catch(e) {
+      tocEl.innerHTML = '<div class="toc-empty">Could not read<br>table of contents</div>';
+    }
+  }
+
+  async function flattenOutline(items, level, container) {
+    for (const item of items) {
+      let pageNum = null;
+      try {
+        if (item.dest) {
+          const dest = typeof item.dest === 'string'
+            ? await pdfDoc.getDestination(item.dest)
+            : item.dest;
+          if (dest) {
+            const ref = dest[0];
+            pageNum = await pdfDoc.getPageIndex(ref) + 1;
+          }
+        }
+      } catch(_) {}
+
+      const div = document.createElement('div');
+      div.className = 'toc-item';
+      div.dataset.level = level;
+      div.dataset.page = pageNum || 1;
+      div.textContent = item.title || '—';
+      div.onclick = () => {
+        if (pageNum) goToPage(pageNum);
+        document.querySelectorAll('.toc-item').forEach(el => el.classList.remove('active'));
+        div.classList.add('active');
+      };
+      container.appendChild(div);
+      tocItems.push({ title: item.title, page: pageNum, el: div });
+
+      if (item.items && item.items.length > 0 && level < 3) {
+        await flattenOutline(item.items, level + 1, container);
+      }
+    }
+  }
+
+  function toggleTOC() {
+    const panel = document.getElementById('toc-panel');
+    const btn   = document.getElementById('toc-btn');
+    panel.classList.toggle('open');
+    btn.classList.toggle('active');
+  }
+
+  // ── TEXT EXTRACTION (for search) ──
+  async function extractAllText() {
+    if (!pdfDoc) return;
+    for (let i = 1; i <= totalPages; i++) {
+      try {
+        const page = await pdfDoc.getPage(i);
+        const content = await page.getTextContent();
+        pageTexts[i] = content.items.map(it => it.str).join(' ');
+      } catch(_) { pageTexts[i] = ''; }
+    }
+  }
+
+  // ── SEARCH ──
+  let searchDebounce;
+  function onSearchInput() {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(doSearch, 300);
+  }
+
+  function onSearchKey(e) {
+    if (e.key === 'Escape') {
+      document.getElementById('search-input').value = '';
+      clearSearch();
+    }
+    if (e.key === 'Enter') doSearch();
+  }
+
+  function doSearch() {
+    const q = document.getElementById('search-input').value.trim();
+    searchQuery = q;
+
+    if (!q || !pdfDoc) { clearSearch(); return; }
+
+    searchResults = [];
+    const lower = q.toLowerCase();
+
+    for (let pg = 1; pg <= totalPages; pg++) {
+      const text = pageTexts[pg] || '';
+      if (!text) continue;
+      const ltext = text.toLowerCase();
+      let idx = 0;
+      while ((idx = ltext.indexOf(lower, idx)) !== -1) {
+        const snippet = text.substring(Math.max(0, idx - 40), idx + q.length + 60);
+        searchResults.push({ page: pg, idx, snippet, q });
+        idx += lower.length;
+      }
+    }
+
+    renderSearchResults();
+    overlaySearchHighlights();
+
+    const countEl = document.getElementById('search-count');
+    if (searchResults.length > 0) {
+      countEl.textContent = searchResults.length;
+      countEl.style.display = '';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+
+  function renderSearchResults() {
+    const panel = document.getElementById('search-results');
+    if (!searchResults.length) {
+      panel.innerHTML = '<div class="sr-empty">No results found</div>';
+      panel.classList.add('open');
+      return;
+    }
+
+    // Group by page, show first 40
+    const shown = searchResults.slice(0, 40);
+    panel.innerHTML = shown.map((r, i) => {
+      const hl = r.snippet.replace(
+        new RegExp(escapeReg(r.q), 'gi'),
+        m => `<mark>${escapeHtml(m)}</mark>`
+      );
+      return `<div class="sr-item" onclick="goToPage(${r.page});closeSearch()">
+        <div class="sr-page">Page ${r.page}</div>
+        <div class="sr-text">…${hl}…</div>
+      </div>`;
+    }).join('');
+    if (searchResults.length > 40) {
+      panel.innerHTML += `<div class="sr-empty">${searchResults.length - 40} more results…</div>`;
+    }
+    panel.classList.add('open');
+  }
+
+  function closeSearch() {
+    document.getElementById('search-results').classList.remove('open');
+  }
+
+  function clearSearch() {
+    searchResults = [];
+    searchQuery = '';
+    document.getElementById('search-count').style.display = 'none';
+    document.getElementById('search-results').classList.remove('open');
+    document.getElementById('overlay-left').innerHTML = '';
+    document.getElementById('overlay-right').innerHTML = '';
+  }
+
+  // Simple text highlight overlay using absolute positioned divs
+  // (true PDF text-layer highlights require PDF.js text layer — this does canvas-level page coloring)
+  function overlaySearchHighlights() {
+    // Just style the page labels if current pages have results
+    const { left, right } = spreadPages(currentSpread);
+    const hasLeft  = searchResults.some(r => r.page === left);
+    const hasRight = searchResults.some(r => r.page === right);
+
+    const lbl = (id, has) => {
+      const el = document.getElementById(id);
+      el.style.color = has ? 'var(--accent)' : '';
+    };
+    lbl('label-left', hasLeft);
+    lbl('label-right', hasRight);
+  }
+
+  function escapeReg(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function escapeHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // ── THEME ──
+  function toggleTheme() {
+    isDark = !isDark;
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    showToast(isDark ? 'Dark mode' : 'Light mode');
+  }
+
+  // ── FULLSCREEN ──
+  function toggleFullscreen() {
+    const el = document.getElementById('app');
+    if (!document.fullscreenElement) {
+      (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen).call(el);
+      document.getElementById('fs-btn').textContent = '⛶';
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+    }
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    document.getElementById('fs-btn').textContent = document.fullscreenElement ? '⛶' : '⛶';
+  });
+
+  // ── LOADING ──
+  function showLoading(msg) {
+    const el = document.getElementById('loading');
+    document.getElementById('loading-text').textContent = msg;
+    el.classList.add('active');
+  }
+  function hideLoading() { document.getElementById('loading').classList.remove('active'); }
+
+  // ── TOAST ──
+  let toastTimer;
+  function showToast(msg, err = false) {
+    const old = document.querySelector('.toast');
+    if (old) old.remove();
+    const t = document.createElement('div');
+    t.className = 'toast' + (err ? ' err' : '');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 2800);
+  }
+
+  // ── KEYBOARD ──
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown') goNext();
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp'   || e.key === 'PageUp')   goPrev();
+    if (e.key === 'Home') goFirst();
+    if (e.key === 'End')  goLast();
+    if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+    if ((e.key === 'f' && e.ctrlKey) || (e.key === 'f' && e.metaKey)) { e.preventDefault(); document.getElementById('search-input').focus(); }
+    if (e.key === 'Escape') { closeSearch(); }
+  });
+
+  // ── SWIPE / TOUCH ──
+  let touchStartX = 0;
+  document.getElementById('book-stage').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  document.getElementById('book-stage').addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 60) { dx < 0 ? goNext() : goPrev(); }
+  });
+
+  // Mouse swipe on book
+  let mouseStartX = 0;
+  document.getElementById('book-stage').addEventListener('mousedown', e => { mouseStartX = e.clientX; });
+  document.getElementById('book-stage').addEventListener('mouseup', e => {
+    const dx = e.clientX - mouseStartX;
+    if (Math.abs(dx) > 80) { dx < 0 ? goNext() : goPrev(); }
+  });
+
+  // Click outside search to close
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap') && !e.target.closest('.search-results')) closeSearch();
+  });
+
+  // Resize handler
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(async () => {
+      if (pdfDoc) { await sizePanels(); await renderSpread(currentSpread, 'none'); }
+    }, 200);
+  });
+</script>
+</body>
+</html>
