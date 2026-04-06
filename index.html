@@ -729,14 +729,21 @@ async function renderPage(pageNum, canvasId, sideId) {
   const W = side.clientWidth, H = side.clientHeight;
   if (!W || !H) return;
 
+  const dpr  = window.devicePixelRatio || 1;
   const page = await pdfDoc.getPage(pageNum);
   const vp   = page.getViewport({ scale: 1 });
-  const scale = Math.min(W / vp.width, H / vp.height);
-  const svp   = page.getViewport({ scale });
 
+  // Fit to panel in CSS pixels, then multiply by DPR so the canvas
+  // renders at the screen's full physical resolution — no blurring on Retina/HiDPI
+  const cssScale    = Math.min(W / vp.width, H / vp.height);
+  const renderScale = cssScale * dpr;
+  const svp         = page.getViewport({ scale: renderScale });
+
+  // Physical canvas dimensions = CSS size × DPR
   canvas.width  = svp.width;
   canvas.height = svp.height;
-  canvas.style.cssText = `width:${W}px;height:${H}px;display:block;`;
+  // CSS display size stays at panel dimensions — browser handles the DPR mapping
+  canvas.style.cssText = `width:${W}px;height:${H}px;display:block;image-rendering:crisp-edges;`;
 
   const ctx = canvas.getContext('2d');
   ctx.fillStyle = isDark ? '#1a1a1a' : '#ffffff';
